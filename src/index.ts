@@ -1,19 +1,31 @@
 import express from 'express';
+import { Request, Response } from 'express';
+import * as socketio from 'socket.io'
+import path from 'path';
 
 const app = express();
 const defaultPort = 4000;
 app.set('port', defaultPort);
 
 
-var http = require("http").Server(app);
+let http = require('http').Server(app);
+let io = require('socket.io')(http);
 
-// simple '/' endpoint sending a Hello World
-// response
-app.get("/", (req: any, res: any) => {
-    res.send("hello world");
+
+app.get("/", (req: Request, res: Response) => {
+  res.sendFile(path.resolve('./src/client/index.html'));
 });
 
-// start our simple server up on localhost:3000
-const server = http.listen(defaultPort, () =>
-    console.log(`listening on ${defaultPort}`)
+io.on('connection', (socket: socketio.Socket) => {
+  console.log('User connected');
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected')
+  });
+
+});
+
+http.listen(defaultPort, () =>
+  console.log(`listening on ${defaultPort}`)
 );
+
