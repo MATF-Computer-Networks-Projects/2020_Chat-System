@@ -1,0 +1,28 @@
+{
+  "name": "2020_chat-system",
+  "version": "1.0.0",
+  "description": "Chat system developed as part of the Computer Networks course on Faculty of Mathematics, University of Belgrade",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "nodemon ./src/index.ts",
+    "build": "tsc --project ./",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MATF-Computer-Networks-Projects/2020_Chat-System.git"
+  },
+  "author": "Aleksa Tešić",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MATF-Computer-Networks-Projects/2020_Chat-System/issues"
+  },
+  "homepage": "https://github.com/MATF-Computer-Networks-Projects/2020_Chat-System#readme",
+  "dependencies": {
+    "@types/express": "^4.17.9",
+    "@types/socket.io": "^2.1.11",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6",
+    "socket.io": "^3.0.3"
+  }
+}
