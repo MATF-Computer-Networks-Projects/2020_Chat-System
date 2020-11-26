@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Chat system developed as part of the Computer Networks course on Faculty of Mathematics, University of Belgrade",
   "scripts": {
-    "start-server": "nodemon ./src/index.ts",
-    "start-client": "nodemon ./src/client/index.ts",
+    "start": "nodemon ./src/index.ts",
     "build": "tsc --project ./",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

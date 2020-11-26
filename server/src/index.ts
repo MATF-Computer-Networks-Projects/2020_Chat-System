@@ -4,10 +4,13 @@ import express from 'express';
 import cors from 'cors';
 
 const app = express();
-app.use(cors());
 
 const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*'
+  }
+});
 
 io.on('connection', (socket: Socket) => {
   console.log('User connected: ', socket.id);
