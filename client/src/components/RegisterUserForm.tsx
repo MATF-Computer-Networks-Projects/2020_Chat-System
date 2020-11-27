@@ -1,11 +1,13 @@
 import React, { FormEvent } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 
 
-export default function RegisterUserForm () {  
+export default function RegisterUserForm (props: RouteComponentProps) {  
   
   function handleSubmit (event: FormEvent<HTMLFormElement>) {
     console.log('test')
-    event.preventDefault();
+    props.history.push('/home')
+    // event.preventDefault();
   }
   
   return (

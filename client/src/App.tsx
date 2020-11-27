@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import RegisterUserForm from './components/RegisterUserForm';
+import Home from './components/Home';
 
 import io from 'socket.io-client';
 import './App.css';
@@ -13,6 +14,7 @@ function App() {
       <Router>
         <Switch>
           <Route exact path='/' component={RegisterUserForm}/>
+          <Route exact path='/home' component={Home}/>
         </Switch>
       </Router>
     </div>
