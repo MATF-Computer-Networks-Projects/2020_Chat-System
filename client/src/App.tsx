@@ -1,14 +1,13 @@
 import React from 'react';
 import { useSelector, shallowEqual, useDispatch } from "react-redux"
 import io from 'socket.io-client';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import RegisterUser from './components/RegisterUser';
 import Home from './components/Home';
 import './App.css';
 
 import { addUser, removeUser} from './store/actionCreators';
 import { Dispatch } from 'redux';
-
 
 
 function App() {
@@ -26,8 +25,14 @@ function App() {
     <div className="App">
       <Router>
         <Switch>
-          <Route exact path='/' component={RegisterUser}/>
-          <Route exact path='/home' component={Home}/>
+          <Route exact path='/'> 
+            <RegisterUser 
+              addUser={addUser} 
+            />
+          </Route> 
+          <Route exact path='/home'>
+            <Home/>
+          </Route> 
         </Switch>
       </Router>
     </div>

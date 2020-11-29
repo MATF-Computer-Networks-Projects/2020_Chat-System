@@ -1,8 +1,7 @@
 import React, { FormEvent } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 
 
-export default function Home (props: RouteComponentProps) {  
+export default function Home () {  
   
   return (    
     <h2>Home </h2>

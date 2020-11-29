@@ -1,24 +1,26 @@
 import React, { FormEvent } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { useHistory} from 'react-router-dom';
 
 
-interface RegisterUserProps extends RouteComponentProps {
+interface RegisterUserProps {
   addUser: (user: IUser) => void
 }
 
 export default function RegisterUser (props: RegisterUserProps) {  
   
   const [user, setUser] = React.useState<IUser | {}>();
+  const history = useHistory();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     console.log('test')
     props.addUser({
       id: 'whatever',
       socketId: 'whatever vol 2',
       username: 'test username'
     });
-    props.history.push('/home')
-    // event.preventDefault();
+    event.preventDefault();
+    
+    history.push('/home')
   }
 
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
