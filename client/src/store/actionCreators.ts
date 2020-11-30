@@ -16,6 +16,15 @@ export const removeUser = (user: IUser) => {
   return dispatchAction(action);
 }
 
+export const getUsers = (user: IUser) => {
+  const action: UserAction = {
+    type: actionTypes.ADD_USER,
+    user,
+  }
+  return dispatchAction(action)
+}
+
+
 export const dispatchAction = (action: UserAction) => {
   return (dispatch: DispatchType) => {
     dispatch(action);

@@ -25,6 +25,8 @@ const reducer = ( state: UserState = initialState, action: UserAction): UserStat
         ...state,
         users: updatedUsers
       }
+    case actionTypes.GET_USERS:
+      return state
   }
   return state
 }
