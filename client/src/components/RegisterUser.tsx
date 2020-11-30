@@ -2,7 +2,14 @@ import React, { FormEvent } from 'react';
 import { useHistory} from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../store/actionCreators';
-import { Dispatch } from 'redux';
+import io from 'socket.io-client';
+import { v4 as uuidv4 } from 'uuid';
+import { asyncConnect } from '../utils/index';
+
+
+type FormUser = {
+  username: string
+}
 
 export default function RegisterUser() {  
   
@@ -13,15 +20,20 @@ export default function RegisterUser() {
     [dispatch]
   )
 
-  const [user, setUser] = React.useState<IUser | {}>();
+  const [user, setUser] = React.useState<FormUser>();
   const history = useHistory();
+  
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    const socket = await asyncConnect();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    console.log('test')
+    if(!user) {
+      throw new Error('user is undefined');
+    }
+
     addUserCallback({
-      id: 'whatever',
-      socketId: 'whatever vol 2',
-      username: 'test username'
+      id: uuidv4(),
+      socketId: socket.id,
+      username: user.username
     });
     event.preventDefault();
     
@@ -31,7 +43,7 @@ export default function RegisterUser() {
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
     setUser({
       ...user,
-      [e.currentTarget.id]: e.currentTarget.value,
+      username: e.currentTarget.value,
     })
   }
   
