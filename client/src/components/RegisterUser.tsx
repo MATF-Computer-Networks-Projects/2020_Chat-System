@@ -24,8 +24,12 @@ export default function RegisterUser() {
   const history = useHistory();
   
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const socket = await asyncConnect();
 
+    
+    console.log('Stigao ovde');
+    
     if(!user) {
       throw new Error('user is undefined');
     }
@@ -35,7 +39,7 @@ export default function RegisterUser() {
       socketId: socket.id,
       username: user.username
     });
-    event.preventDefault();
+    
     
     history.push('/home')
   }
