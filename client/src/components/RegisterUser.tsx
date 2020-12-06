@@ -27,6 +27,8 @@ export default function RegisterUser() {
     event.preventDefault();
     const socket = await asyncConnect();
 
+    //socket.emit('send username')
+
     
     console.log('Stigao ovde');
     
