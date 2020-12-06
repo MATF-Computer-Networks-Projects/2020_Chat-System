@@ -1,7 +1,11 @@
 import { envVal } from './envVal';
 import { Socket } from 'socket.io';
 import express from 'express';
-import { socketEvents } from './types';
+import { 
+  socketEvents, 
+  ActiveUser,
+  SendUsernameMessage
+} from './types';
 
 const app = express();
 
@@ -12,11 +16,20 @@ const io = require('socket.io')(server, {
   }
 });
 
+let activeUsers: ActiveUser[] = [];
+
 io.on(socketEvents.CONNECTION, (socket: Socket) => {
   console.log('User connected: ', socket.id);
   
-  socket.on(socketEvents.SEND_USERNAME, (msg) => {
-    console.log('event received: ', msg);
+  socket.on(socketEvents.SEND_USERNAME, (msg: SendUsernameMessage) => {
+
+    activeUsers.push({
+      username: msg.username,
+      socketId: socket.id
+    });
+
+    console.log('Currentlu active users: ', activeUsers);
+
   });
 
 });
