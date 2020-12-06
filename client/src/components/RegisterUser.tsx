@@ -5,7 +5,10 @@ import { addUser } from '../store/actionCreators';
 import io from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import { asyncConnect } from '../utils/index';
-import { socketEvents } from '../types';
+import { 
+  socketEvents, 
+  SendActiveUsersMessage
+} from '../types';
 
 
 type FormUser = {
@@ -30,6 +33,10 @@ export default function RegisterUser() {
 
     socket.emit(socketEvents.SEND_USERNAME, {
       username: user?.username
+    })
+
+    socket.on(socketEvents.SEND_ACTIVE_USERS, (msg: SendActiveUsersMessage) => {
+      console.log('activeUsers: ', msg.activeUsers);
     })
 
     
