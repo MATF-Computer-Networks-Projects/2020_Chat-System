@@ -3,12 +3,12 @@ import { socketEvents } from '../types';
 
 
 export const asyncConnect = async():Promise<typeof Socket> => {
-    return new Promise( (resolve, _reject) => {
-        setTimeout(() => {
-            const socket = io.connect(process.env.REACT_APP_SERVER_URL as string);
-            socket.on(socketEvents.CONNECT, () => {
-                resolve(socket)
-            });
-        }, 500)
-    });
+  return new Promise( (resolve, _reject) => {
+    setTimeout(() => {
+      const socket = io.connect(process.env.REACT_APP_SERVER_URL as string);
+      socket.on(socketEvents.CONNECT, () => {
+          resolve(socket)
+      });
+    }, 500)
+  });
 }

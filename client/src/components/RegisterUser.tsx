@@ -1,10 +1,11 @@
 import React, { FormEvent } from 'react';
 import { useHistory} from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { addUser } from '../store/actionCreators';
 import io from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import { asyncConnect } from '../utils/index';
+import { socketEvents } from '../types';
 
 
 type FormUser = {
@@ -27,7 +28,9 @@ export default function RegisterUser() {
     event.preventDefault();
     const socket = await asyncConnect();
 
-    //socket.emit('send username')
+    socket.emit(socketEvents.SEND_USERNAME, {
+      username: user?.username
+    })
 
     
     console.log('Stigao ovde');
