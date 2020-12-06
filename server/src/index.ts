@@ -1,7 +1,7 @@
 import { envVal } from './envVal';
 import { Socket } from 'socket.io';
 import express from 'express';
-import cors from 'cors';
+import { socketEvents } from './types';
 
 const app = express();
 
@@ -12,19 +12,20 @@ const io = require('socket.io')(server, {
   }
 });
 
-io.on('connection', (socket: Socket) => {
+io.on(socketEvents.CONNECTION, (socket: Socket) => {
   console.log('User connected: ', socket.id);
-  socket.on('message', (evt) => {
-    console.log('event received: ', evt);
-    socket.broadcast.emit('message', evt);
-  })
+  
+  socket.on(socketEvents.SEND_USERNAME, (msg) => {
+    console.log('event received: ', msg);
+  });
+
 });
 
-io.on('disconnect', () => {
+io.on(socketEvents.DISCONNECT, () => {
   console.log('User disconnected');
 });
 
-server.listen(envVal.serverPort, () =>
+server.listen(envVal.serverPort, () => {
   console.log(`listening on ${envVal.serverPort}`)
-);
+});
 
