@@ -3,6 +3,7 @@ export const socketEvents = {
   DISCONNECT: 'disconnect',
   CONNECTION: 'connection',
   SEND_USERNAME: 'sendUsername',
+  SEND_ACTIVE_USERS: 'sendActiveUsers',
 }
 
 export interface ActiveUser {

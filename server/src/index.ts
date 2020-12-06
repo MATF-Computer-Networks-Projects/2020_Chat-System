@@ -28,8 +28,11 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
       socketId: socket.id
     });
 
-    console.log('Currentlu active users: ', activeUsers);
-
+    console.log('Currently active users: ', activeUsers);
+    
+    socket.emit(socketEvents.SEND_ACTIVE_USERS, {
+      activeUsers
+    })
   });
 
 });
