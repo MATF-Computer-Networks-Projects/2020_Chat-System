@@ -2,7 +2,7 @@ import * as actionTypes from './actionTypes';
 import { v4 as uuidv4 } from 'uuid';
 
 const initialState: UserState = {
-  users:[]
+  user: undefined,
 }
 
 const reducer = ( state: UserState = initialState, action: UserAction): UserState => {
@@ -10,24 +10,21 @@ const reducer = ( state: UserState = initialState, action: UserAction): UserStat
     case actionTypes.ADD_USER:
       const newUser: IUser = {
         id: uuidv4(),
-        socketId: action.user.socketId,
         username: action.user.username,
+        socket: action.user.socket
       }
       return {
         ...state,
-        users: state.users.concat(newUser)
+        user: newUser
       }
     case actionTypes.REMOVE_USER:
-      const updatedUsers: IUser[] = state.users.filter(
-        user => user.id !== action.user.id
-      )
       return {
         ...state,
-        users: updatedUsers
+        user: undefined
       }
     case actionTypes.GET_USERS:
       return state
-  }
+  } 
   return state
 }
 

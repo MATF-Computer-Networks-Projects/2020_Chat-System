@@ -1,10 +1,10 @@
 interface IUser {
     id: string,
-    socketId: string,
     username: string,
+    socket: object
   }
 type UserState = {
-  users: IUser[]
+  user: IUser | undefined,
 }
 
 type UserAction = {

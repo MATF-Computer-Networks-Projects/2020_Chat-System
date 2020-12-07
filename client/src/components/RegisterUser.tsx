@@ -39,17 +39,15 @@ export default function RegisterUser() {
       console.log('activeUsers: ', msg.activeUsers);
     })
 
-    
-    console.log('Stigao ovde');
-    
+        
     if(!user) {
       throw new Error('user is undefined');
     }
 
     addUserCallback({
       id: uuidv4(),
-      socketId: socket.id,
-      username: user.username
+      username: user.username,
+      socket,
     });
     
     
