@@ -5,6 +5,8 @@ import {
   SendActiveUsersMessage
 } from '../types';
 import { Socket } from 'socket.io-client';
+import Home from './Home';
+
 
 
 type CurrentUser = {
@@ -15,10 +17,13 @@ type CurrentUser = {
 export default function RegisterUser() {  
   
   const [username, setUsername] = React.useState<string>("");
-  const [socket, setSocket] = React.useState<typeof Socket | undefined>(undefined);
+  const [socket, setSocket] = React.useState<typeof Socket>();
   const [badUsername, setBadUsername] = React.useState<boolean>(true);
+  const [signupSuccessful, setSignupSuccesful] = React.useState<boolean>(false);
   
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+
+    event.preventDefault();
 
     if (username === "") {
       setBadUsername(true)
@@ -27,15 +32,18 @@ export default function RegisterUser() {
       setBadUsername(false);
     }
 
-    event.preventDefault();
-    setSocket(await asyncConnect());
+    const socketFromServer = await asyncConnect();
+    console.log('socketFromServer: ', socketFromServer);
+    setSocket({
+      ...socket,
+      socketFromServer as typeof Socket
+    });
     
     console.log('socket: ', socket);
     if(!socket) {
       throw new Error('socket is undefined');
     }
 
-    setSocket(socket);
 
     socket.emit(socketEvents.SEND_USERNAME, {
       username
@@ -44,16 +52,12 @@ export default function RegisterUser() {
     socket.on(socketEvents.SEND_ACTIVE_USERS, (msg: SendActiveUsersMessage) => {
       console.log('activeUsers: ', msg.activeUsers);
     });
-
-      
-    console.log('username: ', username);
-    console.log('socket: ', socket);
     
+    setSignupSuccesful(true);
+
   }
 
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-    console.log('handleInputChange.value: ', e.currentTarget.value);
-
     setUsername(e.currentTarget.value);
   }
   
@@ -63,19 +67,30 @@ export default function RegisterUser() {
     }
   }
 
-  return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h2>Enter username</h2>
+  const generateInputForm = () => {
+    return (
+      <div>
+        <form onSubmit={handleSubmit}>
+          <h2>Enter username</h2>
 
-        <input 
-          type='text'
-          id='username'
-          onChange={handleInputChange} 
-        />
-        <button type="submit">Submit</button>
-      </form>
-      <div>{generateErrorMessageIfNeeded()}</div>
-    </div>
-  )
+          <input 
+            type='text'
+            id='username'
+            onChange={handleInputChange} 
+          />
+          <button type="submit">Submit</button>
+        </form>
+        <div>{generateErrorMessageIfNeeded()}</div>
+      </div>
+    )
+  }
+
+  const render = () => {
+    if(signupSuccessful) {
+      return <Home/>
+    } else {
+      return generateInputForm();
+    }
+  }
+  return render();
 }
