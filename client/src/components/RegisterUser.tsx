@@ -1,5 +1,4 @@
 import React, { FormEvent } from 'react';
-import { useHistory} from 'react-router-dom';
 import { asyncConnect } from '../utils/index';
 import { 
   socketEvents, 
@@ -15,16 +14,13 @@ type CurrentUser = {
 
 export default function RegisterUser() {  
   
-  const [user, setUser] = React.useState<CurrentUser>({
-    username: "",
-    socket: undefined
-  });
+  const [username, setUsername] = React.useState<string>("");
+  const [socket, setSocket] = React.useState<typeof Socket | undefined>(undefined);
   const [badUsername, setBadUsername] = React.useState<boolean>(true);
-  const history = useHistory();
   
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 
-    if (user.username === "") {
+    if (username === "") {
       setBadUsername(true)
       return;
     } else {
@@ -32,32 +28,33 @@ export default function RegisterUser() {
     }
 
     event.preventDefault();
-    const socket = await asyncConnect();
+    setSocket(await asyncConnect());
     
-    setUser({
-      ...user,
-      socket
-    })
+    console.log('socket: ', socket);
+    if(!socket) {
+      throw new Error('socket is undefined');
+    }
+
+    setSocket(socket);
 
     socket.emit(socketEvents.SEND_USERNAME, {
-      username: user?.username
-    })
+      username
+    });
 
     socket.on(socketEvents.SEND_ACTIVE_USERS, (msg: SendActiveUsersMessage) => {
       console.log('activeUsers: ', msg.activeUsers);
-    })
+    });
 
-        
-    if(!user) {
-      throw new Error('user is undefined');
-    }    
+      
+    console.log('username: ', username);
+    console.log('socket: ', socket);
+    
   }
 
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setUser({
-      ...user,
-      username: e.currentTarget.value,
-    })
+    console.log('handleInputChange.value: ', e.currentTarget.value);
+
+    setUsername(e.currentTarget.value);
   }
   
   const generateErrorMessageIfNeeded = () => {
