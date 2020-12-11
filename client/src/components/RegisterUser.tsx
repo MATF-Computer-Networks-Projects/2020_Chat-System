@@ -8,17 +8,14 @@ import { Socket } from 'socket.io-client';
 import Home from './Home';
 
 
-
-type CurrentUser = {
-  username: string
-  socket: typeof Socket | undefined
-}
-
 export default function RegisterUser() {  
+
+  // let socket: typeof Socket;
   
   const [username, setUsername] = React.useState<string>("");
-  const [socket, setSocket] = React.useState<typeof Socket>();
   const [badUsername, setBadUsername] = React.useState<boolean>(true);
+  const [socket, setSocket] = React.useState<typeof Socket>();
+  const [errorMsg, setErrorMsg] = React.useState<string>("");
   const [signupSuccessful, setSignupSuccesful] = React.useState<boolean>(false);
   
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -33,17 +30,22 @@ export default function RegisterUser() {
     }
 
     const socketFromServer = await asyncConnect();
-    console.log('socketFromServer: ', socketFromServer);
-    setSocket({
-      ...socket,
-      socketFromServer as typeof Socket
-    });
-    
-    console.log('socket: ', socket);
-    if(!socket) {
-      throw new Error('socket is undefined');
+    if(!socketFromServer) {
+      setErrorMsg('Backend unreachable');
     }
 
+    setSocket(
+      socketFromServer
+    );
+    console.log('socketFromServer: ', socketFromServer);
+    console.log('socket: ', socket);
+
+    
+    if(!socket) {
+      throw new Error('Socket is undefined');
+    }
+    
+    console.log('socket: ', socket);
 
     socket.emit(socketEvents.SEND_USERNAME, {
       username
@@ -62,9 +64,16 @@ export default function RegisterUser() {
   }
   
   const generateErrorMessageIfNeeded = () => {
+    
+    let error = errorMsg;
+    
     if (badUsername) {
-      return <h3>Username must not be empty</h3>
+      error += "User name must not be emtpy\n";
     }
+    return (
+      <h3>{error}</h3>
+    )
+
   }
 
   const generateInputForm = () => {
@@ -87,7 +96,7 @@ export default function RegisterUser() {
 
   const render = () => {
     if(signupSuccessful) {
-      return <Home/>
+      return <Home socket={socket as typeof Socket} testString='stagod' />
     } else {
       return generateInputForm();
     }

@@ -1,14 +1,13 @@
-import { useSelector, shallowEqual } from "react-redux"
+import { Socket } from "socket.io-client"
 
-export default function Home () {  
+interface Props {
+  socket: typeof Socket
+  testString: string
+}
+
+export default function Home (props: Props) {  
   
-  const user: IUser | undefined = useSelector(
-    (state: UserState) => state.user,
-    shallowEqual
-  );
-
-    console.log('users: ', user);
-
+  console.log('props from Home component: ', props);
   return (    
     <h2>Home </h2>
   )
