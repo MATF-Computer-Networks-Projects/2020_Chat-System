@@ -1,26 +1,39 @@
-import React, { FormEvent } from 'react';
-import { asyncConnect } from '../utils/index';
+import React, { FormEvent, useEffect } from 'react';
 import { 
   socketEvents, 
   SendActiveUsersMessage
 } from '../types';
 import { Socket } from 'socket.io-client';
 import Home from './Home';
-
+import { asyncConnect } from '../utils';
 
 export default function RegisterUser() {  
-
-  // let socket: typeof Socket;
   
+  const [socket, setSocket] = React.useState<typeof Socket>();
   const [username, setUsername] = React.useState<string>("");
   const [badUsername, setBadUsername] = React.useState<boolean>(true);
-  const [socket, setSocket] = React.useState<typeof Socket>();
   const [errorMsg, setErrorMsg] = React.useState<string>("");
   const [signupSuccessful, setSignupSuccesful] = React.useState<boolean>(false);
   
+
+  useEffect(() => {
+    async function getSocket() {
+      if(socket) {
+        return;
+      }
+      const socketFromServer = await asyncConnect();
+      setSocket(socketFromServer);
+    }
+    getSocket()
+  }, []
+  );
+
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 
     event.preventDefault();
+
+    console.log('socket from server: ', socket);
 
     if (username === "") {
       setBadUsername(true)
@@ -29,29 +42,17 @@ export default function RegisterUser() {
       setBadUsername(false);
     }
 
-    const socketFromServer = await asyncConnect();
-    if(!socketFromServer) {
+    if(!socket) {
       setErrorMsg('Backend unreachable');
     }
 
-    setSocket(
-      socketFromServer
-    );
-    console.log('socketFromServer: ', socketFromServer);
-    console.log('socket: ', socket);
+    const usableSocket = socket as typeof Socket;
 
-    
-    if(!socket) {
-      throw new Error('Socket is undefined');
-    }
-    
-    console.log('socket: ', socket);
-
-    socket.emit(socketEvents.SEND_USERNAME, {
+    usableSocket.emit(socketEvents.SEND_USERNAME, {
       username
     });
 
-    socket.on(socketEvents.SEND_ACTIVE_USERS, (msg: SendActiveUsersMessage) => {
+    usableSocket.on(socketEvents.SEND_ACTIVE_USERS, (msg: SendActiveUsersMessage) => {
       console.log('activeUsers: ', msg.activeUsers);
     });
     
@@ -68,7 +69,7 @@ export default function RegisterUser() {
     let error = errorMsg;
     
     if (badUsername) {
-      error += "User name must not be emtpy\n";
+      error += "User name must not be empty\n";
     }
     return (
       <h3>{error}</h3>
@@ -96,7 +97,7 @@ export default function RegisterUser() {
 
   const render = () => {
     if(signupSuccessful) {
-      return <Home socket={socket as typeof Socket} testString='stagod' />
+      return <Home socket={socket as typeof Socket}/>
     } else {
       return generateInputForm();
     }

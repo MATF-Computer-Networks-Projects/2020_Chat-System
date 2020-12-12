@@ -1,7 +1,6 @@
 import io, { Socket } from 'socket.io-client';
 import { socketEvents } from '../types';
 
-
 export const asyncConnect = async():Promise<typeof Socket> => {
   return new Promise( (resolve, _reject) => {
     setTimeout(() => {
