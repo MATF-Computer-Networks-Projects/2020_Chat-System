@@ -4,7 +4,8 @@ import express from 'express';
 import { 
   socketEvents, 
   ActiveUser,
-  SendUsernameMessage
+  SendUsernameMessage,
+  SendActiveUsersMessage,
 } from './types';
 
 const app = express();
@@ -23,6 +24,10 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
   
   socket.on(socketEvents.SEND_USERNAME, (msg: SendUsernameMessage) => {
 
+    if(!msg.username) {
+      return;
+    }
+
     activeUsers.push({
       username: msg.username,
       socketId: socket.id
@@ -30,10 +35,20 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
 
     console.log('Currently active users: ', activeUsers);
     
-    socket.emit(socketEvents.SEND_ACTIVE_USERS, {
+  
+  });
+
+  socket.on(socketEvents.SEND_ACTIVE_USERS, (msg: SendActiveUsersMessage) => {
+    
+    if(!msg.socketId) {
+      return
+    }
+    
+    console.log('sendActiveUsers from: ', msg.socketId);
+    socket.to('/#' + msg.socketId).emit(socketEvents.RECEIVE_ACTIVE_USERS, {
       activeUsers
     })
-  });
+  })
 
 });
 
