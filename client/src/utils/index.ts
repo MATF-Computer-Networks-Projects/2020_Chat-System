@@ -11,3 +11,13 @@ export const asyncConnect = async():Promise<typeof Socket> => {
     }, 500)
   });
 }
+
+export async function asyncWrapFunctionWithMessage<T>(socket: typeof Socket, event: string):Promise<T> {
+  return new Promise( (resolve, _reject) => {
+    setTimeout(() => {
+      socket.on(event, (msg: T) => {
+        resolve(msg)   
+      });
+    }, 500)
+  });
+}

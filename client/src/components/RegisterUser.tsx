@@ -1,38 +1,28 @@
-import React, { FormEvent, useEffect } from 'react';
+import React, { FormEvent } from 'react';
 import { 
   socketEvents, 
-  SendActiveUsersMessage
 } from '../types';
 import { Socket } from 'socket.io-client';
 import Home from './Home';
-import { asyncConnect } from '../utils';
+import { useHistory } from 'react-router-dom';
 
-export default function RegisterUser() {  
+interface Props {
+  socket: typeof Socket
+}
+
+export default function RegisterUser(props: Props) {  
   
-  const [socket, setSocket] = React.useState<typeof Socket>();
   const [username, setUsername] = React.useState<string>("");
   const [badUsername, setBadUsername] = React.useState<boolean>(true);
   const [errorMsg, setErrorMsg] = React.useState<string>("");
-  const [signupSuccessful, setSignupSuccesful] = React.useState<boolean>(false);
+
+  const history = useHistory();
   
-
-  useEffect(() => {
-    async function getSocket() {
-      if(socket) {
-        return;
-      }
-      const socketFromServer = await asyncConnect();
-      setSocket(socketFromServer);
-    }
-    getSocket()
-  }, []
-  );
-
-
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 
     event.preventDefault();
 
+    const socket = props.socket;
     console.log('socket from server: ', socket);
 
     if (username === "") {
@@ -52,12 +42,7 @@ export default function RegisterUser() {
       username
     });
 
-    usableSocket.on(socketEvents.SEND_ACTIVE_USERS, (msg: SendActiveUsersMessage) => {
-      console.log('activeUsers: ', msg.activeUsers);
-    });
-    
-    setSignupSuccesful(true);
-
+    history.push('/home');
   }
 
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -69,7 +54,7 @@ export default function RegisterUser() {
     let error = errorMsg;
     
     if (badUsername) {
-      error += "User name must not be empty\n";
+      error += "Username must not be empty\n";
     }
     return (
       <h3>{error}</h3>
@@ -93,14 +78,6 @@ export default function RegisterUser() {
         <div>{generateErrorMessageIfNeeded()}</div>
       </div>
     )
-  }
-
-  const render = () => {
-    if(signupSuccessful) {
-      return <Home socket={socket as typeof Socket}/>
-    } else {
-      return generateInputForm();
-    }
-  }
-  return render();
+  }  
+  return generateInputForm();
 }
