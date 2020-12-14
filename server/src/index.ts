@@ -28,9 +28,18 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
       return;
     }
 
+    if(
+      activeUsers
+      .map(e => e.userId)
+      .find(e => e === msg.userId)
+    ) {
+      return;
+    }
+
+
     activeUsers.push({
       username: msg.username,
-      socketId: socket.id
+      userId: msg.userId,
     });
 
     console.log('Currently active users: ', activeUsers);
@@ -38,14 +47,9 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
   
   });
 
-  socket.on(socketEvents.SEND_ACTIVE_USERS, (msg: SendActiveUsersMessage) => {
-    
-    if(!msg.socketId) {
-      return
-    }
-    
-    console.log('sendActiveUsers from: ', msg.socketId);
-    socket.to('/#' + msg.socketId).emit(socketEvents.RECEIVE_ACTIVE_USERS, {
+  socket.on(socketEvents.SEND_ACTIVE_USERS, () => {
+        
+    socket.emit(socketEvents.RECEIVE_ACTIVE_USERS, {
       activeUsers
     })
   })

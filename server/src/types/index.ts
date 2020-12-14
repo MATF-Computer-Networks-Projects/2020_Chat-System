@@ -8,12 +8,13 @@ export const socketEvents = {
 }
 
 export interface ActiveUser {
-  socketId: string,
   username: string,
+  userId: string
 }
 
 export interface SendUsernameMessage {
   username: string
+  userId: string
 }
 
 export interface SendActiveUsersMessage {
