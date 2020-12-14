@@ -3,26 +3,26 @@ import {
   socketEvents, 
 } from '../types';
 import { Socket } from 'socket.io-client';
-import Home from './Home';
 import { useHistory } from 'react-router-dom';
+import { useSocket } from '../contexts/SocketProvider';
 
 interface Props {
-  socket: typeof Socket
+  userId: string
 }
 
-export default function RegisterUser(props: Props) {  
+export default function RegisterUser({userId}: Props) {  
   
   const [username, setUsername] = React.useState<string>("");
   const [badUsername, setBadUsername] = React.useState<boolean>(true);
   const [errorMsg, setErrorMsg] = React.useState<string>("");
 
   const history = useHistory();
+  const socket = useSocket() as typeof Socket;
   
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 
     event.preventDefault();
 
-    const socket = props.socket;
     console.log('socket from server: ', socket);
 
     if (username === "") {
@@ -36,10 +36,9 @@ export default function RegisterUser(props: Props) {
       setErrorMsg('Backend unreachable');
     }
 
-    const usableSocket = socket as typeof Socket;
-
-    usableSocket.emit(socketEvents.SEND_USERNAME, {
-      username
+    socket.emit(socketEvents.SEND_USERNAME, {
+      userId,
+      username,
     });
 
     history.push('/home');

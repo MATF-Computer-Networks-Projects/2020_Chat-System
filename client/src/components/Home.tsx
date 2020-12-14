@@ -1,20 +1,25 @@
-import { Socket } from "socket.io-client"
 import { 
   socketEvents, 
   ActiveUser,
   ReceiveActiveUsersMessage,
 } from '../types';
 import React, { useEffect } from 'react';
+import { useSocket } from '../contexts/SocketProvider';
+import { v4 as uuidv4} from 'uuid';
+
 
 interface Props {
-  socket: typeof Socket
+  userId: string
 }
 
-export default function Home (props: Props) {  
+export default function Home ({ userId }: Props) {  
+  
   const [activeUsers, setActiveUsers] = React.useState<ActiveUser[]>();
+  const [requestedActiveUsers, setRequestedActiveUsers] = React.useState<boolean>(false);
+  const socket = useSocket();
 
   useEffect(() => {
-      props.socket.on(socketEvents.RECEIVE_ACTIVE_USERS, (msg: ReceiveActiveUsersMessage) => {
+      socket.on(socketEvents.RECEIVE_ACTIVE_USERS, (msg: ReceiveActiveUsersMessage) => {
         console.log('received message: ', msg);
         setActiveUsers(msg.activeUsers);
       })
@@ -22,7 +27,10 @@ export default function Home (props: Props) {
 
   const displayActiveUsers = () => {
 
-    props.socket.emit(socketEvents.SEND_ACTIVE_USERS, {socketId: props.socket.id});
+    if(!requestedActiveUsers) {
+      socket.emit(socketEvents.SEND_ACTIVE_USERS);
+      setRequestedActiveUsers(true)
+    }
 
     console.log('activeUsers: ', activeUsers);
 
@@ -32,7 +40,11 @@ export default function Home (props: Props) {
     
     return (
     <ul>
-      {activeUsers.map(e => <li>{e.username}</li>)}
+      {
+        activeUsers
+          .filter(e => e.userId !== userId)
+          .map(e => <li id={uuidv4()}>{e.username}</li>)
+      }
     </ul>
     )
   }

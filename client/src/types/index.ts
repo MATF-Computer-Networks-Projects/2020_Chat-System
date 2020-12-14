@@ -9,7 +9,7 @@ export const socketEvents = {
 
 
 export interface ActiveUser {
-  socketId: string,
+  userId: string,
   username: string,
 }
 
