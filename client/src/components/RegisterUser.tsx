@@ -5,6 +5,8 @@ import {
 import { Socket } from 'socket.io-client';
 import { useHistory } from 'react-router-dom';
 import { useSocket } from '../contexts/SocketProvider';
+import { addUsername } from '../store/actionCreators';
+import { useDispatch } from 'react-redux';
 
 interface Props {
   userId: string
@@ -18,6 +20,14 @@ export default function RegisterUser({userId}: Props) {
 
   const history = useHistory();
   const socket = useSocket() as typeof Socket;
+
+  const dispatch = useDispatch();
+
+  const addUsernameCallback = React.useCallback(
+    (username: string) => dispatch(addUsername(username)),
+    [dispatch]
+  )
+
   
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 
@@ -41,6 +51,7 @@ export default function RegisterUser({userId}: Props) {
       username,
     });
 
+    addUsernameCallback(username);
     history.push('/home');
   }
 
