@@ -7,6 +7,10 @@ import { useHistory } from 'react-router-dom';
 import { useSocket } from '../contexts/SocketProvider';
 import { addUsername } from '../store/actionCreators';
 import { useDispatch } from 'react-redux';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 
 interface Props {
   userId: string
@@ -55,7 +59,7 @@ export default function RegisterUser({userId}: Props) {
     history.push('/home');
   }
 
-  const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setUsername(e.currentTarget.value);
   }
   
@@ -74,19 +78,34 @@ export default function RegisterUser({userId}: Props) {
 
   const generateInputForm = () => {
     return (
-      <div>
+      <Container>
         <form onSubmit={handleSubmit}>
           <h2>Enter username</h2>
-
-          <input 
-            type='text'
-            id='username'
-            onChange={handleInputChange} 
-          />
-          <button type="submit">Submit</button>
+          <Grid container spacing={3}>
+            <Grid item  xs={3} />
+            <Grid item  xs={6} >
+              <TextField 
+                type='text'
+                id='username'
+                onChange={handleInputChange} 
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            <Grid item  xs={3} />
+            <Grid item  xs={6} >
+              <Button 
+                type="submit"
+                fullWidth
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
         </form>
         <div>{generateErrorMessageIfNeeded()}</div>
-      </div>
+      </Container>
     )
   }  
   return generateInputForm();
