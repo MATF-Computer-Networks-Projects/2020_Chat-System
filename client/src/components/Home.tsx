@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import ActiveUsersList from './ActiveUsersList';
+import ChatTextbox from './ChatTextbox';
 import Grid from '@material-ui/core/Grid';
 
 interface Props {
@@ -33,7 +34,7 @@ export default function Home ({ userId }: Props) {
             <ActiveUsersList userId = {userId}/>  
           </Grid>
           <Grid item xs={6} >
-            
+            <ChatTextbox />
           </Grid>
         </Grid>
       </div>
