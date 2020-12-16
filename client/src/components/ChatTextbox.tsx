@@ -26,28 +26,38 @@ export default function ChatTextbox() {
 
   }
 
+  const generateInputFieldAndButton = () => {
+    return (
+      <form onSubmit={handleSubmit}>
+      <Grid container spacing={3}>
+        <Grid item xs={10} >
+          <TextField
+            id='message-input-field'
+            placeholder='Type your message here'
+            value={message}
+            onChange={handleInputChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={2} >
+          <Button
+            type='submit'
+            fullWidth
+          >
+            Send
+          </Button>
+        </Grid>
+      </Grid>
+      </form>
+    )  
+  }
+
+
   return (
-    <form onSubmit={handleSubmit}>
-    <Grid container spacing={3}>
-      <Grid item xs={10} >
-        <TextField
-          id='message-input-field'
-          placeholder='Type your message here'
-          value={message}
-          onChange={handleInputChange}
-          fullWidth
-        />
-      </Grid>
-      <Grid item xs={2} >
-        <Button
-          type='submit'
-          fullWidth
-        >
-          Send
-        </Button>
-      </Grid>
-    </Grid>
-    </form>
-    
+    <div>
+      <div>
+        {generateInputFieldAndButton()}
+      </div>
+    </div>
   )
 }
