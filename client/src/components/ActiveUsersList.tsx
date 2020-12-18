@@ -7,7 +7,6 @@ import {
 import { useSocket } from '../contexts/SocketProvider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
@@ -15,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
   userId: string
+  updateSelectedUser: Function
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -70,7 +70,12 @@ export default function ActiveUsersList(props: Props) {
               .map(user => (
                 <ListItem id={uuidv4()}>
                   <Paper style={{width: '100%'}}>
-                    <Box p={2} m={1} fontSize='h6.fontSize'>
+                    <Box 
+                      p={2} 
+                      m={1} 
+                      fontSize='h6.fontSize' 
+                      onClick={() => props.updateSelectedUser(user.username)}
+                    >
                       {user.username}
                     </Box>
                   </Paper>

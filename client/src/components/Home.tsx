@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import ActiveUsersList from './ActiveUsersList';
@@ -16,6 +16,12 @@ export default function Home ({ userId }: Props) {
     (state: UserState) => state.username,
     shallowEqual
   );
+
+  const [selectedUser, setSelectedUser] = useState('');
+
+  const updateSelectedUser = (newSelectedUser: string) => {
+    setSelectedUser(newSelectedUser);
+  }
 
   useEffect(() => {
 
@@ -35,10 +41,10 @@ export default function Home ({ userId }: Props) {
       <div style={style}>
         <Grid container spacing={3}>
           <Grid item xs={3} >
-            <ActiveUsersList userId = {userId}/>  
+            <ActiveUsersList userId={userId} updateSelectedUser={updateSelectedUser}/>  
           </Grid>
           <Grid item xs={6} >
-            <ChatTextbox />
+            <ChatTextbox  selectedUser={selectedUser}/>
           </Grid>
         </Grid>
       </div>

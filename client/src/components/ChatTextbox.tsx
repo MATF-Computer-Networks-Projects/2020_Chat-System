@@ -9,7 +9,11 @@ import Box from '@material-ui/core/Box';
 import { v4 as uuidv4 } from 'uuid';
 
 
-export default function ChatTextbox() {
+interface Props {
+  selectedUser: string
+}
+
+export default function ChatTextbox(props: Props) {
 
   const [message, setMessage] = useState('');
   const [currentUserMessages, setCurrentUserMessages] = useState<string[]>([]);
@@ -75,8 +79,27 @@ export default function ChatTextbox() {
     )
   }
 
+  const generateUserNotSelectedMessage = () => {
+    return (
+      <div>
+        Please select the user to start chatting
+      </div>
+    )
+  }
+
+  if(props.selectedUser === '') {
+    return (
+      <div>
+        {generateUserNotSelectedMessage()}
+      </div>
+    )
+  }
+
   return (
     <div>
+      <Box>
+        {`Chatting with: ${props.selectedUser}`}
+      </Box>
       <Box marginBottom={5}>
         {generateMessageBox()}
       </Box>
