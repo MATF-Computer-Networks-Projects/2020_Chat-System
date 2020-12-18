@@ -8,6 +8,8 @@ import { useSocket } from '../contexts/SocketProvider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -60,18 +62,23 @@ export default function ActiveUsersList(props: Props) {
     }
     
     return (
-      <List component='div' className={classes.root}>
-        {
-          activeUsers
-            .filter(user => user.userId !== props.userId)
-            .map(user => (
-              <ListItem id={uuidv4()}>
-                <ListItemText primary={user.username}/>
-              </ListItem>
+      
+        <List component='div' className={classes.root}>
+          {
+            activeUsers
+              .filter(user => user.userId !== props.userId)
+              .map(user => (
+                <ListItem id={uuidv4()}>
+                  <Paper style={{width: '100%'}}>
+                    <Box p={2} m={1} fontSize='h6.fontSize'>
+                      {user.username}
+                    </Box>
+                  </Paper>
+                </ListItem>
+                )
               )
-            )
-        }
-    </List>
+          }
+      </List>
     )
   }
 
