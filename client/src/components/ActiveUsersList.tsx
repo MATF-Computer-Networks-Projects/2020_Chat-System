@@ -9,6 +9,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
   userId: string
@@ -62,10 +63,10 @@ export default function ActiveUsersList(props: Props) {
       <List component='div' className={classes.root}>
         {
           activeUsers
-            .filter(e => e.userId !== props.userId)
-            .map(e => (
-              <ListItem>
-                <ListItemText primary={e.username}/>
+            .filter(user => user.userId !== props.userId)
+            .map(user => (
+              <ListItem id={uuidv4()}>
+                <ListItemText primary={user.username}/>
               </ListItem>
               )
             )

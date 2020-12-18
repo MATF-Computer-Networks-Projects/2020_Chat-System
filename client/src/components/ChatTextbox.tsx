@@ -4,6 +4,10 @@ import { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
+import { v4 as uuidv4 } from 'uuid';
+
 
 export default function ChatTextbox() {
 
@@ -23,7 +27,6 @@ export default function ChatTextbox() {
 
     setCurrentUserMessages([...currentUserMessages, message]);
     setMessage('');
-
   }
 
   const generateInputFieldAndButton = () => {
@@ -52,12 +55,34 @@ export default function ChatTextbox() {
     )  
   }
 
+  const generateMessageBox = () => {    
+    return (
+      <Paper>
+        <Grid container spacing={3}>
+          {
+            currentUserMessages.map(message => {
+              return (
+                <Grid item xs={12} id={uuidv4()}>
+                  <Box p={2} textAlign="right">
+                    {message}
+                  </Box>
+                </Grid>
+              )
+            })
+          }
+        </Grid>
+      </Paper>
+    )
+  }
 
   return (
     <div>
-      <div>
+      <Box marginBottom={5}>
+        {generateMessageBox()}
+      </Box>
+      <Box>
         {generateInputFieldAndButton()}
-      </div>
+      </Box>
     </div>
   )
 }
