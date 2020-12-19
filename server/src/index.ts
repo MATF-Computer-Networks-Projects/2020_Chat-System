@@ -55,13 +55,13 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
   })
 
   socket.on(socketEvents.SEND_MESSAGE, (msg: SendMessageData) => {
+    
+    console.log('SEND_MESSAGE: ', msg)
     const sender = msg.senderId
-    const receiver = activeUsers.find(user => user.userId === msg.recipientId)
-    if(!receiver) {
-      return
-    }
 
-    socket.emit(socketEvents.RECEIVE_MESSAGE + receiver.userId, {
+    console.log('RECEIVER: ', socketEvents.RECEIVE_MESSAGE + msg.recipientId);
+
+    socket.emit(socketEvents.RECEIVE_MESSAGE + msg.recipientId, {
       sender,
       message: msg.message
     })
