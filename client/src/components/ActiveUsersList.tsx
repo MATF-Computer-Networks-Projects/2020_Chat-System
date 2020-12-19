@@ -81,7 +81,7 @@ export default function ActiveUsersList(props: Props) {
                       p={2} 
                       m={1} 
                       fontSize='h6.fontSize' 
-                      onClick={() => props.updateSelectedUser(user.username)}
+                      onClick={() => props.updateSelectedUser(user)}
                     >
                       {user.username}
                     </Box>

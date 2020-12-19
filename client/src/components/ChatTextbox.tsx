@@ -88,6 +88,8 @@ export default function ChatTextbox(props: Props) {
     )
   }
 
+  console.log('currently selected user: ', props.selectedUser);
+
   if(!props.selectedUser) {
     return (
       <div>
@@ -99,7 +101,7 @@ export default function ChatTextbox(props: Props) {
   return (
     <div>
       <Box>
-        {`Chatting with: ${props.selectedUser}`}
+        {`Chatting with: ${props.selectedUser.username}`}
       </Box>
       <Box marginBottom={5}>
         {generateMessageBox()}
