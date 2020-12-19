@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import ActiveUsersList from './ActiveUsersList';
 import ChatTextbox from './ChatTextbox';
 import Grid from '@material-ui/core/Grid';
+import { ActiveUser } from '../types';
 
 interface Props {
   userId: string
@@ -17,15 +18,15 @@ export default function Home ({ userId }: Props) {
     shallowEqual
   );
 
-  const [selectedUser, setSelectedUser] = useState('');
+  const [selectedUser, setSelectedUser] = useState<ActiveUser>();
 
-  const updateSelectedUser = (newSelectedUser: string) => {
+  const updateSelectedUser = (newSelectedUser: ActiveUser) => {
     setSelectedUser(newSelectedUser);
   }
 
   useEffect(() => {
 
-    if(username === "") {
+    if(username === '') {
       history.push('/');
       return;
     }

@@ -7,10 +7,11 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import { v4 as uuidv4 } from 'uuid';
+import { ActiveUser } from '../types';
 
 
 interface Props {
-  selectedUser: string
+  selectedUser: ActiveUser | undefined
 }
 
 export default function ChatTextbox(props: Props) {
@@ -87,7 +88,7 @@ export default function ChatTextbox(props: Props) {
     )
   }
 
-  if(props.selectedUser === '') {
+  if(!props.selectedUser) {
     return (
       <div>
         {generateUserNotSelectedMessage()}
