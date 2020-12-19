@@ -1,6 +1,5 @@
 
-import { useState } from 'react';
-
+import { useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -8,17 +7,39 @@ import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import { v4 as uuidv4 } from 'uuid';
 import { ActiveUser } from '../types';
-
+import { useSocket } from '../contexts/SocketProvider';
+import { shallowEqual, useSelector } from 'react-redux';
+import { 
+  socketEvents,
+  ReceiveMessagesMessage
+} from '../types';
 
 interface Props {
   selectedUser: ActiveUser | undefined
 }
 
 export default function ChatTextbox(props: Props) {
+  const socket = useSocket();
+  const userId = useSelector(
+    (state: UserState) => state.userId,
+    shallowEqual
+  );
 
   const [message, setMessage] = useState('');
   const [currentUserMessages, setCurrentUserMessages] = useState<string[]>([]);
 
+  useEffect(() => {
+    console.log('RECEIVER: ', socketEvents.RECEIVE_MESSAGE + userId);
+
+    if(!socket) {
+      return;
+    }
+
+    socket.on(socketEvents.RECEIVE_MESSAGE + userId, (data: ReceiveMessagesMessage) => {
+      console.log('received message: ', data);
+    })
+  });
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setMessage(e.currentTarget.value);
   }
@@ -31,6 +52,11 @@ export default function ChatTextbox(props: Props) {
     }
 
     setCurrentUserMessages([...currentUserMessages, message]);
+    socket.emit(socketEvents.SEND_MESSAGE, {
+      senderId: userId, 
+      recipientId: props.selectedUser?.userId,
+      message
+    })
     setMessage('');
   }
 
