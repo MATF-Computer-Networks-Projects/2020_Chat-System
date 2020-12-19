@@ -3,9 +3,9 @@ import { Socket } from 'socket.io';
 import express from 'express';
 import { 
   socketEvents, 
-  ActiveUser,
-  SendUsernameMessage,
   SendActiveUsersMessage,
+  ClientUserData,
+  SendMessageData,
 } from './types';
 
 const app = express();
@@ -17,12 +17,12 @@ const io = require('socket.io')(server, {
   }
 });
 
-let activeUsers: ActiveUser[] = [];
+let activeUsers: ClientUserData[] = [];
 
 io.on(socketEvents.CONNECTION, (socket: Socket) => {
   console.log('User connected: ', socket.id);
   
-  socket.on(socketEvents.SEND_USERNAME, (msg: SendUsernameMessage) => {
+  socket.on(socketEvents.SEND_USERNAME, (msg: ClientUserData) => {
 
     if(!msg.username) {
       return;
@@ -52,6 +52,20 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
     socket.emit(socketEvents.RECEIVE_ACTIVE_USERS, {
       activeUsers
     })
+  })
+
+  socket.on(socketEvents.SEND_MESSAGE, (msg: SendMessageData) => {
+    const sender = msg.senderId
+    const receiver = activeUsers.find(user => user.userId === msg.recipientId)
+    if(!receiver) {
+      return
+    }
+
+    socket.emit(socketEvents.RECEIVE_MESSAGE + receiver.userId, {
+      sender,
+      message: msg.message
+    })
+
   })
 
 });

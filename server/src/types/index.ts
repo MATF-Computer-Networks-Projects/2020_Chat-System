@@ -5,16 +5,19 @@ export const socketEvents = {
   SEND_USERNAME: 'sendUsername',
   SEND_ACTIVE_USERS: 'sendActiveUsers',
   RECEIVE_ACTIVE_USERS: 'receiveActiveUsers',
+  SEND_MESSAGE: 'sendMessage',
+  RECEIVE_MESSAGE: 'receiveMessage'
 }
 
-export interface ActiveUser {
-  username: string,
-  userId: string
-}
-
-export interface SendUsernameMessage {
+export interface ClientUserData {
   username: string
   userId: string
+}
+
+export interface SendMessageData {
+  senderId: string,
+  recipientId: string,
+  message: string
 }
 
 export interface SendActiveUsersMessage {
