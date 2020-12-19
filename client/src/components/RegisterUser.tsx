@@ -6,17 +6,14 @@ import { Socket } from 'socket.io-client';
 import { useHistory } from 'react-router-dom';
 import { useSocket } from '../contexts/SocketProvider';
 import { addUsername } from '../store/actionCreators';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 
-interface Props {
-  userId: string
-}
 
-export default function RegisterUser({userId}: Props) {  
+export default function RegisterUser() {  
   
   const [username, setUsername] = React.useState<string>("");
   const [badUsername, setBadUsername] = React.useState<boolean>(true);
@@ -24,6 +21,11 @@ export default function RegisterUser({userId}: Props) {
 
   const history = useHistory();
   const socket = useSocket() as typeof Socket;
+
+  const userId = useSelector(
+    (state: UserState) => state.userId,
+    shallowEqual
+  );
 
   const dispatch = useDispatch();
 

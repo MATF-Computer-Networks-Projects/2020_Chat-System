@@ -6,15 +6,17 @@ import ChatTextbox from './ChatTextbox';
 import Grid from '@material-ui/core/Grid';
 import { ActiveUser } from '../types';
 
-interface Props {
-  userId: string
-}
 
-export default function Home ({ userId }: Props) {  
+export default function Home () {  
   const history = useHistory();
 
   const username = useSelector(
     (state: UserState) => state.username,
+    shallowEqual
+  );
+
+  const userId = useSelector(
+    (state: UserState) => state.userId,
     shallowEqual
   );
 
@@ -42,7 +44,7 @@ export default function Home ({ userId }: Props) {
       <div style={style}>
         <Grid container spacing={3}>
           <Grid item xs={3} >
-            <ActiveUsersList userId={userId} updateSelectedUser={updateSelectedUser}/>  
+            <ActiveUsersList updateSelectedUser={updateSelectedUser}/>  
           </Grid>
           <Grid item xs={6} >
             <ChatTextbox  selectedUser={selectedUser}/>

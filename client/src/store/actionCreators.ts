@@ -8,6 +8,15 @@ export const addUsername = (username: string) => {
   return dispatchAction(action)
 }
 
+export const addUserId = (userId: string) => {
+  const action: UserAction = {
+    type: actionTypes.ADD_USER_ID,
+    userId,
+  }
+  return dispatchAction(action)
+}
+
+
 export const dispatchAction = (action: UserAction) => {
   return (dispatch: DispatchType) => {
     dispatch(action);

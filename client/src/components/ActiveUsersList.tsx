@@ -11,9 +11,10 @@ import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { v4 as uuidv4 } from 'uuid';
+import { shallowEqual, useSelector } from 'react-redux';
+
 
 interface Props {
-  userId: string
   updateSelectedUser: Function
 }
 
@@ -25,12 +26,18 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
+
 export default function ActiveUsersList(props: Props) {
   const socket = useSocket();
   const [activeUsers, setActiveUsers] = useState<ActiveUser[]>();
   const [requestedActiveUsers, setRequestedActiveUsers] = React.useState<boolean>(false);
   const classes = useStyles();
   
+  const userId = useSelector(
+    (state: UserState) => state.userId,
+    shallowEqual
+  );
+
   useEffect(() => {
 
     if(!socket) {
@@ -66,7 +73,7 @@ export default function ActiveUsersList(props: Props) {
         <List component='div' className={classes.root}>
           {
             activeUsers
-              .filter(user => user.userId !== props.userId)
+              .filter(user => user.userId !== userId)
               .map(user => (
                 <ListItem id={uuidv4()}>
                   <Paper style={{width: '100%'}}>
