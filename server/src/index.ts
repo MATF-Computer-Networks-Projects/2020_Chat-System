@@ -44,7 +44,10 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
 
     console.log('Currently active users: ', activeUsers);
     
-  
+    //? Notify all other users that a new connection was established so they can update ActiveUserList accordingly
+    socket.broadcast.emit(socketEvents.RECEIVE_ACTIVE_USERS, {
+      activeUsers
+    })
   });
 
   socket.on(socketEvents.SEND_ACTIVE_USERS, () => {
@@ -61,7 +64,7 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
 
     console.log('RECEIVER: ', socketEvents.RECEIVE_MESSAGE + msg.recipientId);
 
-    socket.emit(socketEvents.RECEIVE_MESSAGE + msg.recipientId, {
+    socket.broadcast.emit(socketEvents.RECEIVE_MESSAGE + msg.recipientId, {
       sender,
       message: msg.message
     })
