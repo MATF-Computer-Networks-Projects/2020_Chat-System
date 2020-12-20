@@ -15,11 +15,6 @@ export default function Home () {
     shallowEqual
   );
 
-  const userId = useSelector(
-    (state: UserState) => state.userId,
-    shallowEqual
-  );
-
   const [selectedUser, setSelectedUser] = useState<ActiveUser>();
 
   const updateSelectedUser = (newSelectedUser: ActiveUser) => {
@@ -40,7 +35,7 @@ export default function Home () {
   
   return (    
     <div>
-      <h2>Home </h2>
+      <h2> {`Logged in as: ${username}`} </h2>
       <div style={style}>
         <Grid container spacing={3}>
           <Grid item xs={3} >
