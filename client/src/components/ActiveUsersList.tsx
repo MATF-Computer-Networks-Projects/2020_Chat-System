@@ -3,6 +3,7 @@ import {
   ActiveUser,
   ReceiveActiveUsersMessage,
   socketEvents,
+  SingleMessage
 } from '../types';
 import { useSocket } from '../contexts/SocketProvider';
 import List from '@material-ui/core/List';
@@ -16,6 +17,8 @@ import { shallowEqual, useSelector } from 'react-redux';
 
 interface Props {
   updateSelectedUser: Function
+  updateCurrentUserMessages: Function
+  currentUserMessages: SingleMessage[]
 }
 
 const useStyles = makeStyles((theme: Theme) =>

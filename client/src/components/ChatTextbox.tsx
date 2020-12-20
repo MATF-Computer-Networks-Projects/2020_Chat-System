@@ -6,16 +6,18 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import { v4 as uuidv4 } from 'uuid';
-import { ActiveUser } from '../types';
 import { useSocket } from '../contexts/SocketProvider';
 import { shallowEqual, useSelector } from 'react-redux';
 import { 
   socketEvents,
-  SingleMessage
+  SingleMessage,
+  ActiveUser,
 } from '../types';
 
 interface Props {
   selectedUser: ActiveUser | undefined
+  updateCurrentUserMessages: Function
+  currentUserMessages: SingleMessage[]
 }
 
 export default function ChatTextbox(props: Props) {
@@ -26,7 +28,6 @@ export default function ChatTextbox(props: Props) {
   );
 
   const [message, setMessage] = useState('');
-  const [currentUserMessages, setCurrentUserMessages] = useState<SingleMessage[]>([]);
 
   useEffect(() => {
     console.log('RECEIVER: ', socketEvents.RECEIVE_MESSAGE + userId);
@@ -43,7 +44,7 @@ export default function ChatTextbox(props: Props) {
         message: data.message,
         timestampUTC: data.timestampUTC
       }
-      setCurrentUserMessages([...currentUserMessages, newMessage])
+      props.updateCurrentUserMessages(newMessage)
     })
   });
   
@@ -69,7 +70,7 @@ export default function ChatTextbox(props: Props) {
       timestampUTC: Date.now()
     }
 
-    setCurrentUserMessages([...currentUserMessages, newMessage]);
+    props.updateCurrentUserMessages(newMessage)
     socket.emit(socketEvents.SEND_MESSAGE, newMessage)
     setMessage('');
   }
@@ -101,9 +102,9 @@ export default function ChatTextbox(props: Props) {
   }
 
   const generateMessageBox = () => {    
-    console.log('currentUserMessages: ', currentUserMessages);
+    console.log('currentUserMessages: ', props.currentUserMessages);
     
-    const filteredMessages = currentUserMessages
+    const filteredMessages = props.currentUserMessages
       .filter(msg => 
         (msg.senderId === userId && msg.recipientId === props.selectedUser?.userId) ||
         (msg.senderId === props.selectedUser?.userId)
@@ -142,7 +143,7 @@ export default function ChatTextbox(props: Props) {
 
   console.log('currently selected user: ', props.selectedUser);
 
-  if(!props.selectedUser && currentUserMessages === []) {
+  if(!props.selectedUser && props.currentUserMessages === []) {
     return (
       <div>
         {generateUserNotSelectedMessage()}
