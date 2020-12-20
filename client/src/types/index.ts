@@ -3,12 +3,22 @@ export const socketEvents = {
   DISCONNECT: 'disconnect',
   CONNECTION: 'connection',
   SEND_USERNAME: 'sendUsername',
+  
   SEND_ACTIVE_USERS: 'sendActiveUsers',
   RECEIVE_ACTIVE_USERS: 'receiveActiveUsers',
+  
   SEND_MESSAGE: 'sendMessage',
-  RECEIVE_MESSAGE: 'receiveMessage'
+  RECEIVE_MESSAGE: 'receiveMessage',
+
+  CHECK_USERNAME: 'checkUsername',
+  RECEIVE_CHECK_USERNAME: 'receiveCheckUsername',
 }
 
+export const errorMessages = {
+  USERNAME_ALREADY_EXISTS: 'Username already exists, please choose another one.',
+  USERNAME_EMPTY: 'Username must not be empty.',
+  BACKEND_UNREACHABLE: 'Backend unreachable.'
+}
 
 export interface ActiveUser {
   userId: string,

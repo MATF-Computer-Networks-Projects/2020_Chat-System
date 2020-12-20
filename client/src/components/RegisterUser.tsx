@@ -1,6 +1,7 @@
 import React, { FormEvent } from 'react';
 import { 
   socketEvents, 
+  errorMessages,
 } from '../types';
 import { Socket } from 'socket.io-client';
 import { useHistory } from 'react-router-dom';
@@ -15,9 +16,8 @@ import Grid from '@material-ui/core/Grid';
 
 export default function RegisterUser() {  
   
-  const [username, setUsername] = React.useState<string>("");
-  const [badUsername, setBadUsername] = React.useState<boolean>(true);
-  const [errorMsg, setErrorMsg] = React.useState<string>("");
+  const [username, setUsername] = React.useState<string>('');
+  const [errorMsg, setErrorMsg] = React.useState<string>('');
 
   const history = useHistory();
   const socket = useSocket() as typeof Socket;
@@ -34,50 +34,42 @@ export default function RegisterUser() {
     [dispatch]
   )
 
-  
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 
     event.preventDefault();
 
     console.log('socket from server: ', socket);
 
-    if (username === "") {
-      setBadUsername(true)
+    if (username === '') {
+      setErrorMsg(errorMessages.USERNAME_EMPTY)
       return;
-    } else {
-      setBadUsername(false);
     }
 
     if(!socket) {
-      setErrorMsg('Backend unreachable');
+      setErrorMsg(errorMessages.BACKEND_UNREACHABLE);
     }
 
-    socket.emit(socketEvents.SEND_USERNAME, {
-      userId,
-      username,
-    });
+    socket.emit(socketEvents.CHECK_USERNAME, username);
+    socket.on(socketEvents.RECEIVE_CHECK_USERNAME, (usernameExists: boolean) => {
+      if(usernameExists) {
+        setErrorMsg(errorMessages.USERNAME_ALREADY_EXISTS);
+        return;
+      }
+      
+      socket.emit(socketEvents.SEND_USERNAME, {
+        userId,
+        username,
+      });
 
-    addUsernameCallback(username);
-    history.push('/home');
+      addUsernameCallback(username);
+      history.push('/home');
+    })
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setUsername(e.currentTarget.value);
   }
   
-  const generateErrorMessageIfNeeded = () => {
-    
-    let error = errorMsg;
-    
-    if (badUsername) {
-      error += "Username must not be empty\n";
-    }
-    return (
-      <h3>{error}</h3>
-    )
-
-  }
-
   const generateInputForm = () => {
     return (
       <Container>
@@ -106,7 +98,7 @@ export default function RegisterUser() {
             </Grid>
           </Grid>
         </form>
-        <div>{generateErrorMessageIfNeeded()}</div>
+        <div><h3>{errorMsg}</h3></div>
       </Container>
     )
   }  
