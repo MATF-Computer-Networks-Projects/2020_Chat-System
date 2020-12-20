@@ -15,10 +15,13 @@ export interface ActiveUser {
   username: string,
 }
 
-export interface ReceiveMessagesMessage {
-  sender: string, 
-  message: string
+export interface SingleMessage {
+  senderId: string, 
+  recipientId: string,
+  message: string,
+  timestampUTC: number
 }
+
 
 export interface ReceiveActiveUsersMessage {
   activeUsers: ActiveUser[]

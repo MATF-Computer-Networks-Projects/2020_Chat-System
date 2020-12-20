@@ -11,7 +11,7 @@ import { useSocket } from '../contexts/SocketProvider';
 import { shallowEqual, useSelector } from 'react-redux';
 import { 
   socketEvents,
-  ReceiveMessagesMessage
+  SingleMessage
 } from '../types';
 
 interface Props {
@@ -26,8 +26,7 @@ export default function ChatTextbox(props: Props) {
   );
 
   const [message, setMessage] = useState('');
-  const [currentUserMessages, setCurrentUserMessages] = useState<string[]>([]);
-  const [receivedMessages, setReceivedMessages] = useState<string[]>([]);
+  const [currentUserMessages, setCurrentUserMessages] = useState<SingleMessage[]>([]);
 
   useEffect(() => {
     console.log('RECEIVER: ', socketEvents.RECEIVE_MESSAGE + userId);
@@ -36,9 +35,15 @@ export default function ChatTextbox(props: Props) {
       return;
     }
 
-    socket.on(socketEvents.RECEIVE_MESSAGE + userId, (data: ReceiveMessagesMessage) => {
+    socket.on(socketEvents.RECEIVE_MESSAGE + userId, (data: SingleMessage) => {
       console.log('received message: ', data)
-      setReceivedMessages([...receivedMessages, data.message])
+      const newMessage: SingleMessage = {
+        senderId: data.senderId,
+        recipientId: data.recipientId,
+        message: data.message,
+        timestampUTC: data.timestampUTC
+      }
+      setCurrentUserMessages([...currentUserMessages, newMessage])
     })
   });
   
@@ -53,12 +58,19 @@ export default function ChatTextbox(props: Props) {
       return;
     }
 
-    setCurrentUserMessages([...currentUserMessages, message]);
-    socket.emit(socketEvents.SEND_MESSAGE, {
-      senderId: userId, 
-      recipientId: props.selectedUser?.userId,
-      message
-    })
+    if(!props.selectedUser || !props.selectedUser.userId) {
+      return
+    }
+
+    const newMessage: SingleMessage = {
+      senderId: userId,
+      recipientId: props.selectedUser.userId,
+      message,
+      timestampUTC: Date.now()
+    }
+
+    setCurrentUserMessages([...currentUserMessages, newMessage]);
+    socket.emit(socketEvents.SEND_MESSAGE, newMessage)
     setMessage('');
   }
 
@@ -89,28 +101,27 @@ export default function ChatTextbox(props: Props) {
   }
 
   const generateMessageBox = () => {    
+    console.log('currentUserMessages: ', currentUserMessages);
+    
+    const filteredMessages = currentUserMessages
+      .filter(msg => 
+        (msg.senderId === userId && msg.recipientId === props.selectedUser?.userId) ||
+        (msg.senderId === props.selectedUser?.userId)
+      )
+      .sort((msg1, msg2) => msg1.timestampUTC - msg2.timestampUTC)
+
+    console.log('filteredMessages: ', filteredMessages);
+
     return (
       <Paper>
         <Grid container spacing={3}>
           {
-            currentUserMessages.map(message => {
+            filteredMessages.map(message => {
+              const alignment = message.senderId === userId ? "right" : "left";
               return (
                 <Grid item xs={12} id={uuidv4()}>
-                  <Box p={2} textAlign="right">
-                    {message}
-                  </Box>
-                </Grid>
-              )
-            })
-          }
-        </Grid>
-        <Grid container spacing={3}>
-          {
-            receivedMessages.map(message => {
-              return (
-                <Grid item xs={12} id={uuidv4()}>
-                  <Box p={2} textAlign="left">
-                    {message}
+                  <Box p={2} textAlign={alignment}>
+                    {message.message}
                   </Box>
                 </Grid>
               )
@@ -131,7 +142,7 @@ export default function ChatTextbox(props: Props) {
 
   console.log('currently selected user: ', props.selectedUser);
 
-  if(!props.selectedUser) {
+  if(!props.selectedUser && currentUserMessages === []) {
     return (
       <div>
         {generateUserNotSelectedMessage()}
@@ -139,10 +150,12 @@ export default function ChatTextbox(props: Props) {
     )
   }
 
+  const displayText = props.selectedUser ? `Chatting with: ${props.selectedUser.username }` : 'Select user to start chatting';
+
   return (
     <div>
       <Box>
-        {`Chatting with: ${props.selectedUser.username}`}
+        {displayText}
       </Box>
       <Box marginBottom={5}>
         {generateMessageBox()}
