@@ -5,7 +5,7 @@ import {
   socketEvents, 
   SendActiveUsersMessage,
   ClientUserData,
-  SendMessageData,
+  SingleMessage,
 } from './types';
 
 const app = express();
@@ -57,7 +57,7 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
     })
   })
 
-  socket.on(socketEvents.SEND_MESSAGE, (msg: SendMessageData) => {
+  socket.on(socketEvents.SEND_MESSAGE, (msg: SingleMessage) => {
     
     console.log('SEND_MESSAGE: ', msg)
     const sender = msg.senderId
@@ -65,8 +65,10 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
     console.log('RECEIVER: ', socketEvents.RECEIVE_MESSAGE + msg.recipientId);
 
     socket.broadcast.emit(socketEvents.RECEIVE_MESSAGE + msg.recipientId, {
-      sender,
-      message: msg.message
+      senderId: msg.senderId,
+      recipientId: msg.recipientId,
+      message: msg.message,
+      timestampUTC: msg.timestampUTC
     })
 
   })

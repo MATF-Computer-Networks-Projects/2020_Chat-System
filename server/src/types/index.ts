@@ -14,10 +14,11 @@ export interface ClientUserData {
   userId: string
 }
 
-export interface SendMessageData {
-  senderId: string,
+export interface SingleMessage {
+  senderId: string, 
   recipientId: string,
-  message: string
+  message: string,
+  timestampUTC: number
 }
 
 export interface SendActiveUsersMessage {
