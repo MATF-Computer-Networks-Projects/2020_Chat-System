@@ -3,10 +3,15 @@ export const socketEvents = {
   DISCONNECT: 'disconnect',
   CONNECTION: 'connection',
   SEND_USERNAME: 'sendUsername',
+  
   SEND_ACTIVE_USERS: 'sendActiveUsers',
   RECEIVE_ACTIVE_USERS: 'receiveActiveUsers',
+  
   SEND_MESSAGE: 'sendMessage',
-  RECEIVE_MESSAGE: 'receiveMessage'
+  RECEIVE_MESSAGE: 'receiveMessage',
+
+  CHECK_USERNAME: 'checkUsername',
+  RECEIVE_CHECK_USERNAME: 'receiveCheckUsername',
 }
 
 export interface ClientUserData {

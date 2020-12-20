@@ -73,6 +73,20 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
 
   })
 
+  socket.on(socketEvents.CHECK_USERNAME, (username: string) => {
+    console.log('CHECK_USERNAME: ', username);
+
+    if(
+      activeUsers
+      .find(usr => usr.username === username)
+    ) {
+      socket.emit(socketEvents.RECEIVE_CHECK_USERNAME, true);
+    } else {
+      return socket.emit(socketEvents.RECEIVE_CHECK_USERNAME, false);
+    }
+
+  })
+
 });
 
 io.on(socketEvents.DISCONNECT, () => {
