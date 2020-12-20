@@ -27,6 +27,7 @@ export default function ChatTextbox(props: Props) {
 
   const [message, setMessage] = useState('');
   const [currentUserMessages, setCurrentUserMessages] = useState<string[]>([]);
+  const [receivedMessages, setReceivedMessages] = useState<string[]>([]);
 
   useEffect(() => {
     console.log('RECEIVER: ', socketEvents.RECEIVE_MESSAGE + userId);
@@ -36,7 +37,8 @@ export default function ChatTextbox(props: Props) {
     }
 
     socket.on(socketEvents.RECEIVE_MESSAGE + userId, (data: ReceiveMessagesMessage) => {
-      console.log('received message: ', data);
+      console.log('received message: ', data)
+      setReceivedMessages([...receivedMessages, data.message])
     })
   });
   
@@ -95,6 +97,19 @@ export default function ChatTextbox(props: Props) {
               return (
                 <Grid item xs={12} id={uuidv4()}>
                   <Box p={2} textAlign="right">
+                    {message}
+                  </Box>
+                </Grid>
+              )
+            })
+          }
+        </Grid>
+        <Grid container spacing={3}>
+          {
+            receivedMessages.map(message => {
+              return (
+                <Grid item xs={12} id={uuidv4()}>
+                  <Box p={2} textAlign="left">
                     {message}
                   </Box>
                 </Grid>

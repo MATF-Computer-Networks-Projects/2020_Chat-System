@@ -45,10 +45,10 @@ export default function ActiveUsersList(props: Props) {
     }
 
     socket.on(socketEvents.RECEIVE_ACTIVE_USERS, (msg: ReceiveActiveUsersMessage) => {
-      console.log('received message: ', msg);
+      console.log('RECEIVE_ACTIVE_USERS: ', msg);
       setActiveUsers(msg.activeUsers);
     })
-  });
+  }, []);
   
   const generateActiveUsers = () => {
     if(!socket) {
