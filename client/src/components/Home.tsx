@@ -29,6 +29,10 @@ export default function Home () {
     setCurrentUserMessages([...currentUserMessages, newMessage])
   }
 
+  const overwriteCurrentUserMessages = (newMessages: SingleMessage[]) => {
+    setCurrentUserMessages(newMessages);
+  }
+
   useEffect(() => {
 
     if(username === '') {
@@ -49,7 +53,8 @@ export default function Home () {
           <Grid item xs={3} >
             <ActiveUsersList 
               updateSelectedUser={updateSelectedUser} 
-              updateCurrentUserMessages={updateCurrentUserMessages}
+              selectedUser={selectedUser}
+              overwriteCurrentUserMessages={overwriteCurrentUserMessages}
               currentUserMessages={currentUserMessages}
             />  
           </Grid>

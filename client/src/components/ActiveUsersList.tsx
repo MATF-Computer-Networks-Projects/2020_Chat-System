@@ -17,7 +17,8 @@ import { shallowEqual, useSelector } from 'react-redux';
 
 interface Props {
   updateSelectedUser: Function
-  updateCurrentUserMessages: Function
+  selectedUser: ActiveUser | undefined
+  overwriteCurrentUserMessages: Function
   currentUserMessages: SingleMessage[]
 }
 
@@ -53,11 +54,37 @@ export default function ActiveUsersList(props: Props) {
     })
   }, [socket]);
   
-  const hasUnseenMessagesFromThisUser = (specificUser: ActiveUser) => {
-    if(props.currentUserMessages.find(msg => msg.senderId === specificUser.userId && msg.seen === false)) {
+  const hasUnseenMessagesFromThisUser = (selectedUser: ActiveUser) => {
+
+    if (props.selectedUser && selectedUser.userId === props.selectedUser.userId) {
+      return false;
+    }
+
+    if(props.currentUserMessages.find(msg => msg.senderId === selectedUser.userId && msg.seen === false)) {
       return true;
     }
     return false;
+  }
+
+  const handleOnClick = (selectedUser: ActiveUser) => {
+    console.log('currentUserMessages: ', props.currentUserMessages);
+
+    const updatedCurrentUserMessages = props.currentUserMessages.map(
+      msg => {
+        if (msg.senderId === selectedUser.userId && msg.seen === false) {
+          return {
+            ...msg,
+            seen: true
+          }
+        } 
+        return msg  
+      }
+    )
+
+    console.log('updatedCurrentUserMessages: ', updatedCurrentUserMessages);
+
+    props.updateSelectedUser(selectedUser);
+    props.overwriteCurrentUserMessages(updatedCurrentUserMessages);
   }
 
   const generateActiveUsers = () => {
@@ -92,7 +119,7 @@ export default function ActiveUsersList(props: Props) {
                       m={1} 
                       fontSize='h6.fontSize' 
                       fontWeight={hasUnseenMessagesFromThisUser(user) ? "fontWeightBold" : "fontWeightRegular"}
-                      onClick={() => props.updateSelectedUser(user)}
+                      onClick={() => handleOnClick(user)}
                     >
                       {user.username}
                     </Box>
