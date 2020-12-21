@@ -51,7 +51,7 @@ export default function ActiveUsersList(props: Props) {
       console.log('RECEIVE_ACTIVE_USERS: ', msg);
       setActiveUsers(msg.activeUsers);
     })
-  }, []);
+  });
   
   const generateActiveUsers = () => {
     if(!socket) {

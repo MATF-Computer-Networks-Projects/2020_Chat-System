@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useEffect } from 'react';
 import { 
   socketEvents, 
   errorMessages,
@@ -27,7 +27,20 @@ export default function RegisterUser() {
     shallowEqual
   );
 
+  const globalUsername = useSelector(
+    (state: UserState) => state.username,
+    shallowEqual
+  );
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+
+    if(globalUsername !== '') {
+      history.push('/home');
+      return;
+    }
+  });
 
   const addUsernameCallback = React.useCallback(
     (username: string) => dispatch(addUsername(username)),
