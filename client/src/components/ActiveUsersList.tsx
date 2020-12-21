@@ -51,8 +51,15 @@ export default function ActiveUsersList(props: Props) {
       console.log('RECEIVE_ACTIVE_USERS: ', msg);
       setActiveUsers(msg.activeUsers);
     })
-  });
+  }, [socket]);
   
+  const hasUnseenMessagesFromThisUser = (specificUser: ActiveUser) => {
+    if(props.currentUserMessages.find(msg => msg.senderId === specificUser.userId && msg.seen === false)) {
+      return true;
+    }
+    return false;
+  }
+
   const generateActiveUsers = () => {
     if(!socket) {
       return (
@@ -84,6 +91,7 @@ export default function ActiveUsersList(props: Props) {
                       p={2} 
                       m={1} 
                       fontSize='h6.fontSize' 
+                      fontWeight={hasUnseenMessagesFromThisUser(user) ? "fontWeightBold" : "fontWeightRegular"}
                       onClick={() => props.updateSelectedUser(user)}
                     >
                       {user.username}

@@ -42,7 +42,8 @@ export default function ChatTextbox(props: Props) {
         senderId: data.senderId,
         recipientId: data.recipientId,
         message: data.message,
-        timestampUTC: data.timestampUTC
+        timestampUTC: data.timestampUTC,
+        seen: data.seen,
       }
       props.updateCurrentUserMessages(newMessage)
     })
@@ -67,7 +68,8 @@ export default function ChatTextbox(props: Props) {
       senderId: userId,
       recipientId: props.selectedUser.userId,
       message,
-      timestampUTC: Date.now()
+      timestampUTC: Date.now(),
+      seen: false,
     }
 
     props.updateCurrentUserMessages(newMessage)
