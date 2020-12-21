@@ -23,7 +23,8 @@ export interface SingleMessage {
   senderId: string, 
   recipientId: string,
   message: string,
-  timestampUTC: number
+  timestampUTC: number,
+  seen: boolean,
 }
 
 export interface SendActiveUsersMessage {

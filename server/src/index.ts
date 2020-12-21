@@ -60,7 +60,6 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
   socket.on(socketEvents.SEND_MESSAGE, (msg: SingleMessage) => {
     
     console.log('SEND_MESSAGE: ', msg)
-    const sender = msg.senderId
 
     console.log('RECEIVER: ', socketEvents.RECEIVE_MESSAGE + msg.recipientId);
 
@@ -68,7 +67,8 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
       senderId: msg.senderId,
       recipientId: msg.recipientId,
       message: msg.message,
-      timestampUTC: msg.timestampUTC
+      timestampUTC: msg.timestampUTC,
+      seen: msg.seen,
     })
 
   })
