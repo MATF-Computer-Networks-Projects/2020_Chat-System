@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { 
   ActiveUser,
   ReceiveActiveUsersMessage,
@@ -21,6 +21,8 @@ interface Props {
   selectedUser: ActiveUser | undefined
   overwriteCurrentUserMessages: Function
   currentUserMessages: SingleMessage[]
+  activeUsers: ActiveUser[] | undefined
+  updateActiveUsers: Function
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -34,7 +36,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ActiveUsersList(props: Props) {
   const socket = useSocket();
-  const [activeUsers, setActiveUsers] = useState<ActiveUser[]>();
   const [requestedActiveUsers, setRequestedActiveUsers] = React.useState<boolean>(false);
   const classes = useStyles();
   
@@ -51,7 +52,7 @@ export default function ActiveUsersList(props: Props) {
 
     socket.on(socketEvents.RECEIVE_ACTIVE_USERS, (msg: ReceiveActiveUsersMessage) => {
       console.log('RECEIVE_ACTIVE_USERS: ', msg);
-      setActiveUsers(msg.activeUsers);
+      props.updateActiveUsers(msg.activeUsers);
     })
   }, [socket]);
   
@@ -100,9 +101,9 @@ export default function ActiveUsersList(props: Props) {
       setRequestedActiveUsers(true)
     }
 
-    console.log('activeUsers: ', activeUsers);
+    console.log('activeUsers: ', props.activeUsers);
 
-    if(!activeUsers) {
+    if(!props.activeUsers) {
       return;
     }
     
@@ -114,7 +115,7 @@ export default function ActiveUsersList(props: Props) {
         <Grid item xs={12}>
           <List component='div' className={classes.root}>
             {
-              activeUsers
+              props.activeUsers
                 .filter(user => user.userId !== userId)
                 .map(user => (
                   <ListItem id={uuidv4()}>

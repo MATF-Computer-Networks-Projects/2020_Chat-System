@@ -21,6 +21,8 @@ export default function Home () {
 
   const [selectedUser, setSelectedUser] = useState<ActiveUser>();
   const [currentUserMessages, setCurrentUserMessages] = useState<SingleMessage[]>([]);
+  const [activeUsers, setActiveUsers] = useState<ActiveUser[]>();
+
 
   const updateSelectedUser = (newSelectedUser: ActiveUser) => {
     setSelectedUser(newSelectedUser);
@@ -32,6 +34,10 @@ export default function Home () {
 
   const overwriteCurrentUserMessages = (newMessages: SingleMessage[]) => {
     setCurrentUserMessages(newMessages);
+  }
+
+  const updateActiveUsers = (newActiveUsers: ActiveUser[]) => {
+    setActiveUsers(newActiveUsers);
   }
 
   useEffect(() => {
@@ -59,6 +65,8 @@ export default function Home () {
                   selectedUser={selectedUser}
                   overwriteCurrentUserMessages={overwriteCurrentUserMessages}
                   currentUserMessages={currentUserMessages}
+                  activeUsers={activeUsers}
+                  updateActiveUsers={updateActiveUsers}
                 />  
               </Grid>
               <Grid item xs={12}>
