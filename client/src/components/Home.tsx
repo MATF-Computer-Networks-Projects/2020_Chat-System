@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import ActiveUsersList from './ActiveUsersList';
+import GroupChatsList from './GroupChatsList';
 import ChatTextbox from './ChatTextbox';
 import Grid from '@material-ui/core/Grid';
 import { 
@@ -51,12 +52,19 @@ export default function Home () {
       <div style={style}>
         <Grid container spacing={3}>
           <Grid item xs={3} >
-            <ActiveUsersList 
-              updateSelectedUser={updateSelectedUser} 
-              selectedUser={selectedUser}
-              overwriteCurrentUserMessages={overwriteCurrentUserMessages}
-              currentUserMessages={currentUserMessages}
-            />  
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <ActiveUsersList 
+                  updateSelectedUser={updateSelectedUser} 
+                  selectedUser={selectedUser}
+                  overwriteCurrentUserMessages={overwriteCurrentUserMessages}
+                  currentUserMessages={currentUserMessages}
+                />  
+              </Grid>
+              <Grid item xs={12}>
+                <GroupChatsList/>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item xs={6} >
             <ChatTextbox  

@@ -10,6 +10,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { v4 as uuidv4 } from 'uuid';
 import { shallowEqual, useSelector } from 'react-redux';
@@ -106,29 +107,35 @@ export default function ActiveUsersList(props: Props) {
     }
     
     return (
-      
-        <List component='div' className={classes.root}>
-          {
-            activeUsers
-              .filter(user => user.userId !== userId)
-              .map(user => (
-                <ListItem id={uuidv4()}>
-                  <Paper style={{width: '100%'}}>
-                    <Box 
-                      p={2} 
-                      m={1} 
-                      fontSize='h6.fontSize' 
-                      fontWeight={hasUnseenMessagesFromThisUser(user) ? "fontWeightBold" : "fontWeightRegular"}
-                      onClick={() => handleOnClick(user)}
-                    >
-                      {user.username}
-                    </Box>
-                  </Paper>
-                </ListItem>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <h2>Active users: </h2>
+        </Grid>
+        <Grid item xs={12}>
+          <List component='div' className={classes.root}>
+            {
+              activeUsers
+                .filter(user => user.userId !== userId)
+                .map(user => (
+                  <ListItem id={uuidv4()}>
+                    <Paper style={{width: '100%'}}>
+                      <Box 
+                        p={2} 
+                        m={1} 
+                        fontSize='h6.fontSize' 
+                        fontWeight={hasUnseenMessagesFromThisUser(user) ? "fontWeightBold" : "fontWeightRegular"}
+                        onClick={() => handleOnClick(user)}
+                      >
+                        {user.username}
+                      </Box>
+                    </Paper>
+                  </ListItem>
+                  )
                 )
-              )
-          }
-      </List>
+            }
+          </List>
+        </Grid>
+      </Grid>
     )
   }
 
