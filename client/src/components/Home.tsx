@@ -70,7 +70,9 @@ export default function Home () {
                 />  
               </Grid>
               <Grid item xs={12}>
-                <GroupChatsList/>
+                <GroupChatsList
+                  activeUsers={activeUsers}
+                />
               </Grid>
             </Grid>
           </Grid>
