@@ -51,7 +51,6 @@ export default function ActiveUsersList(props: Props) {
     }
 
     socket.on(socketEvents.RECEIVE_ACTIVE_USERS, (msg: ReceiveActiveUsersMessage) => {
-      console.log('RECEIVE_ACTIVE_USERS: ', msg);
       props.updateActiveUsers(msg.activeUsers);
     })
   }, [socket]);
@@ -69,8 +68,6 @@ export default function ActiveUsersList(props: Props) {
   }
 
   const handleOnClick = (selectedUser: ActiveUser) => {
-    console.log('currentUserMessages: ', props.currentUserMessages);
-
     const updatedCurrentUserMessages = props.currentUserMessages.map(
       msg => {
         if (msg.senderId === selectedUser.userId && msg.seen === false) {
@@ -82,8 +79,6 @@ export default function ActiveUsersList(props: Props) {
         return msg  
       }
     )
-
-    console.log('updatedCurrentUserMessages: ', updatedCurrentUserMessages);
 
     props.updateSelectedUser(selectedUser);
     props.overwriteCurrentUserMessages(updatedCurrentUserMessages);
@@ -100,8 +95,6 @@ export default function ActiveUsersList(props: Props) {
       socket.emit(socketEvents.SEND_ACTIVE_USERS);
       setRequestedActiveUsers(true)
     }
-
-    console.log('activeUsers: ', props.activeUsers);
 
     if(!props.activeUsers) {
       return;

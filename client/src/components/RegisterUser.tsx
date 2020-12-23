@@ -51,8 +51,6 @@ export default function RegisterUser() {
 
     event.preventDefault();
 
-    console.log('socket from server: ', socket);
-
     if (username === '') {
       setErrorMsg(errorMessages.USERNAME_EMPTY)
       return;

@@ -30,14 +30,12 @@ export default function ChatTextbox(props: Props) {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    console.log('RECEIVER: ', socketEvents.RECEIVE_MESSAGE + userId);
 
     if(!socket) {
       return;
     }
 
     socket.on(socketEvents.RECEIVE_MESSAGE + userId, (data: SingleMessage) => {
-      console.log('received message: ', data)
       const newMessage: SingleMessage = {
         senderId: data.senderId,
         recipientId: data.recipientId,
@@ -104,7 +102,6 @@ export default function ChatTextbox(props: Props) {
   }
 
   const generateMessageBox = () => {    
-    console.log('currentUserMessages: ', props.currentUserMessages);
     
     const filteredMessages = props.currentUserMessages
       .filter(msg => 
@@ -112,8 +109,6 @@ export default function ChatTextbox(props: Props) {
         (msg.senderId === props.selectedUser?.userId)
       )
       .sort((msg1, msg2) => msg1.timestampUTC - msg2.timestampUTC)
-
-    console.log('filteredMessages: ', filteredMessages);
 
     return (
       <Paper>
@@ -142,8 +137,6 @@ export default function ChatTextbox(props: Props) {
       </div>
     )
   }
-
-  console.log('currently selected user: ', props.selectedUser);
 
   if(!props.selectedUser && props.currentUserMessages === []) {
     return (

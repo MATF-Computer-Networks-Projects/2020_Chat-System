@@ -22,6 +22,7 @@ export default function Home () {
   const [selectedUser, setSelectedUser] = useState<ActiveUser>();
   const [currentUserMessages, setCurrentUserMessages] = useState<SingleMessage[]>([]);
   const [activeUsers, setActiveUsers] = useState<ActiveUser[]>();
+  const [activeGroupChats, setActiveGroupChats] = useState<Array<ActiveUser[]>>([]);
 
 
   const updateSelectedUser = (newSelectedUser: ActiveUser) => {
@@ -38,6 +39,10 @@ export default function Home () {
 
   const updateActiveUsers = (newActiveUsers: ActiveUser[]) => {
     setActiveUsers(newActiveUsers);
+  }
+
+  const updateActiveGroupChats = (newGroupChat: ActiveUser[]) => {
+    setActiveGroupChats([...activeGroupChats, newGroupChat]);
   }
 
   useEffect(() => {
@@ -72,6 +77,8 @@ export default function Home () {
               <Grid item xs={12}>
                 <GroupChatsList
                   activeUsers={activeUsers}
+                  activeGroupChats={activeGroupChats}
+                  updateActiveGroupChats={updateActiveGroupChats}
                 />
               </Grid>
             </Grid>
