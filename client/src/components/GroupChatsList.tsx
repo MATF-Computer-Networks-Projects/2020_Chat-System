@@ -34,7 +34,7 @@ export default function GroupChatsList(props: Props) {
   );
 
   const [groupChat, setGroupChat] = useState<ActiveUser[]>([]);
-  
+  const [createNewGroupClicked, setCreateNewGroupClicked] = useState(false);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedUser: ActiveUser = {
@@ -54,8 +54,9 @@ export default function GroupChatsList(props: Props) {
       return;
     }
 
-    props.updateActiveGroupChats([...groupChat, {userId, username} ])
+    props.updateActiveGroupChats([...groupChat])
     setGroupChat([])
+    setCreateNewGroupClicked(false)
   }
 
   const generateActiveGroupChats = () => {
@@ -74,7 +75,7 @@ export default function GroupChatsList(props: Props) {
                     // fontWeight={hasUnseenMessagesFromThisUser(user) ? "fontWeightBold" : "fontWeightRegular"}
                     // onClick={() => handleOnClick(user)}
                   >
-                    {groupChat.reduce((acc, user) => acc + ' ' + user.username, '')}
+                    {groupChat.reduce((acc, user) => acc + ', ' + user.username, 'You')}
                   </Box>
                 </Paper>
               </ListItem>
@@ -87,7 +88,7 @@ export default function GroupChatsList(props: Props) {
 
   const generateActiveUsersCheckboxList = () => {
     console.log('groupChat: ', groupChat);
-    if(!props.activeUsers) {
+    if(!props.activeUsers || !createNewGroupClicked) {
       return
     }
     return (
@@ -116,7 +117,36 @@ export default function GroupChatsList(props: Props) {
       </FormControl>
     )
   }
+
+  const generateConfirmButton = () => {
+    if(!createNewGroupClicked) {
+      return
+    }
+    return (
+      <Button
+        fullWidth
+        onClick={() => handleConfirm()}
+      >
+        Confirm
+      </Button>
+    )
+  }
   
+  const generateCreateNewGroupButton = () => {
+    if(createNewGroupClicked) {
+      return
+    }
+    return (
+      <Button
+        fullWidth
+        hidden={true}
+        onClick={() => {setCreateNewGroupClicked(true)}}
+      >
+        + Create new group
+      </Button>
+    )
+  }
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -126,22 +156,13 @@ export default function GroupChatsList(props: Props) {
         {generateActiveGroupChats()}
       </Grid>
       <Grid item xs={12}>
-        <Button
-          fullWidth
-        >
-          + Create new group
-        </Button>
+        {generateCreateNewGroupButton()}
       </Grid>
       <Grid item xs={12}>
         {generateActiveUsersCheckboxList()}
       </Grid>
       <Grid item xs={12}>
-        <Button
-          fullWidth
-          onClick={() => handleConfirm()}
-        >
-          Confirm
-        </Button>
+        {generateConfirmButton()}
       </Grid>
     </Grid>
   )
