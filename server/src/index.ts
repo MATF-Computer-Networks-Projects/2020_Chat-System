@@ -87,6 +87,10 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
 
   })
 
+  socket.on(socketEvents.SEND_GROUP_CHAT, (groupChat) => {
+    socket.broadcast.emit(socketEvents.RECEIVE_GROUP_CHAT, groupChat);
+  })
+
 });
 
 io.on(socketEvents.DISCONNECT, () => {

@@ -12,6 +12,9 @@ export const socketEvents = {
 
   CHECK_USERNAME: 'checkUsername',
   RECEIVE_CHECK_USERNAME: 'receiveCheckUsername',
+
+  SEND_GROUP_CHAT: 'sendGroupChat',
+  RECEIVE_GROUP_CHAT: 'receiveGroupChat',
 }
 
 export interface ClientUserData {
