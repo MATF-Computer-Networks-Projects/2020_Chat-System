@@ -10,10 +10,14 @@ import {
   FormControl,
   FormGroup
 } from '@material-ui/core';
-import { ActiveUser } from '../types';
+import { 
+  ActiveUser,
+  socketEvents
+} from '../types';
 import { shallowEqual, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSocket } from '../contexts/SocketProvider';
 
 interface Props {
   activeUsers: ActiveUser[] | undefined
@@ -22,7 +26,7 @@ interface Props {
 }
 
 export default function GroupChatsList(props: Props) {
-  
+  const socket = useSocket();
   const userId = useSelector(
     (state: UserState) => state.userId,
     shallowEqual
@@ -33,9 +37,18 @@ export default function GroupChatsList(props: Props) {
     shallowEqual
   );
 
-  const [groupChat, setGroupChat] = useState<ActiveUser[]>([]);
+  const currentUser: ActiveUser = {userId, username};
+
+  const [groupChat, setGroupChat] = useState<ActiveUser[]>([currentUser]);
   const [createNewGroupClicked, setCreateNewGroupClicked] = useState(false);
 
+  useEffect(() => {
+    socket.on(socketEvents.RECEIVE_GROUP_CHAT, (groupChat: ActiveUser[]) => {
+      props.updateActiveGroupChats(groupChat);
+    })
+  }, [socket]);
+  
+  
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedUser: ActiveUser = {
       userId: e.target.id,
@@ -50,12 +63,13 @@ export default function GroupChatsList(props: Props) {
   }
 
   const handleConfirm = () => {
-    if (groupChat.length === 0) {
+    if (groupChat.length === 1 && groupChat[0] === currentUser) {
       return;
     }
 
-    props.updateActiveGroupChats([...groupChat])
-    setGroupChat([])
+    socket.emit(socketEvents.SEND_GROUP_CHAT, groupChat)
+    props.updateActiveGroupChats(groupChat)
+    setGroupChat([currentUser]);
     setCreateNewGroupClicked(false)
   }
 
@@ -75,7 +89,16 @@ export default function GroupChatsList(props: Props) {
                     // fontWeight={hasUnseenMessagesFromThisUser(user) ? "fontWeightBold" : "fontWeightRegular"}
                     // onClick={() => handleOnClick(user)}
                   >
-                    {groupChat.reduce((acc, user) => acc + ', ' + user.username, 'You')}
+                    {
+                      groupChat
+                      .map(user => {
+                        if(user.userId === userId) {
+                          return 'You'
+                        }
+                        return user.username
+                      })
+                      .reduce((acc, username) => acc + ', ' + username)
+                    }
                   </Box>
                 </Paper>
               </ListItem>
