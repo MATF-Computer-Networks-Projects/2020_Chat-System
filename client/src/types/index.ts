@@ -23,6 +23,14 @@ export const errorMessages = {
   BACKEND_UNREACHABLE: 'Backend unreachable.'
 }
 
+
+export interface Chat {
+  chatId: string,
+  users: ActiveUser[],
+  messages: SingleMessage[],
+  type: 'single' | 'group'
+}
+
 export interface ActiveUser {
   userId: string,
   username: string,

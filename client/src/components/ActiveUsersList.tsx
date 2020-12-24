@@ -3,7 +3,8 @@ import {
   ActiveUser,
   ReceiveActiveUsersMessage,
   socketEvents,
-  SingleMessage
+  SingleMessage,
+  Chat
 } from '../types';
 import { useSocket } from '../contexts/SocketProvider';
 import List from '@material-ui/core/List';
@@ -19,10 +20,15 @@ import { shallowEqual, useSelector } from 'react-redux';
 interface Props {
   updateSelectedUser: Function
   selectedUser: ActiveUser | undefined
+  
   overwriteCurrentUserMessages: Function
   currentUserMessages: SingleMessage[]
+  
   activeUsers: ActiveUser[] | undefined
   updateActiveUsers: Function
+  
+  currentUserChats: Chat[],
+  updateCurrentUserChats: Function
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -44,6 +50,31 @@ export default function ActiveUsersList(props: Props) {
     shallowEqual
   );
 
+  const username = useSelector(
+    (state: UserState) => state.username,
+    shallowEqual
+  );
+
+  const createNewEmptyChatsIfNeeded = (activeUsers: ActiveUser[]) => {
+    activeUsers.forEach(user => {
+      if(!props.currentUserChats.find(chat => {
+        return (chat.type === 'single' && chat.users.includes(user))
+      })) {
+        const currentlyActiveUser: ActiveUser = {userId, username}
+        if(currentlyActiveUser === user) {
+          return;
+        }
+        const newChat: Chat = {
+          chatId: uuidv4(),
+          users: [currentlyActiveUser, user],
+          messages: [],
+          type: 'single'
+        }
+        props.updateCurrentUserChats(newChat)
+      }
+    })
+  }
+
   useEffect(() => {
 
     if(!socket) {
@@ -52,6 +83,7 @@ export default function ActiveUsersList(props: Props) {
 
     socket.on(socketEvents.RECEIVE_ACTIVE_USERS, (msg: ReceiveActiveUsersMessage) => {
       props.updateActiveUsers(msg.activeUsers);
+      createNewEmptyChatsIfNeeded(msg.activeUsers);
     })
   }, [socket]);
   
@@ -85,6 +117,7 @@ export default function ActiveUsersList(props: Props) {
   }
 
   const generateActiveUsers = () => {
+
     if(!socket) {
       return (
       <div>Loading</div>
@@ -95,6 +128,8 @@ export default function ActiveUsersList(props: Props) {
       socket.emit(socketEvents.SEND_ACTIVE_USERS);
       setRequestedActiveUsers(true)
     }
+
+    console.log('currentUserChats: ', props.currentUserChats)
 
     if(!props.activeUsers) {
       return;

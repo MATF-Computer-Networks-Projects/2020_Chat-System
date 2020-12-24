@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import { 
   ActiveUser,
   SingleMessage,
+  Chat
 } from '../types';
 
 
@@ -21,6 +22,7 @@ export default function Home () {
 
   const [selectedUser, setSelectedUser] = useState<ActiveUser>();
   const [currentUserMessages, setCurrentUserMessages] = useState<SingleMessage[]>([]);
+  const [currentUserChats, setCurrentUserChats] = useState<Chat[]>([]);
   const [activeUsers, setActiveUsers] = useState<ActiveUser[]>();
   const [activeGroupChats, setActiveGroupChats] = useState<Array<ActiveUser[]>>([]);
 
@@ -43,6 +45,10 @@ export default function Home () {
 
   const updateActiveGroupChats = (newGroupChat: ActiveUser[]) => {
     setActiveGroupChats([...activeGroupChats, newGroupChat]);
+  }
+
+  const updateCurrentUserChats = (newChat: Chat) => {
+    setCurrentUserChats([...currentUserChats, newChat]);
   }
 
   useEffect(() => {
@@ -68,10 +74,15 @@ export default function Home () {
                 <ActiveUsersList 
                   updateSelectedUser={updateSelectedUser} 
                   selectedUser={selectedUser}
+                  
                   overwriteCurrentUserMessages={overwriteCurrentUserMessages}
                   currentUserMessages={currentUserMessages}
+                  
                   activeUsers={activeUsers}
                   updateActiveUsers={updateActiveUsers}
+
+                  currentUserChats={currentUserChats}
+                  updateCurrentUserChats={updateCurrentUserChats}
                 />  
               </Grid>
               <Grid item xs={12}>
