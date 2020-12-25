@@ -62,7 +62,7 @@ export default function Home () {
   }
 
   const updateCurrentUserChats = (newChat: Chat) => {
-    addNewChatCallback(chat.prepareChatForSaving(newChat));
+    addNewChatCallback(newChat);
   }
 
   useEffect(() => {

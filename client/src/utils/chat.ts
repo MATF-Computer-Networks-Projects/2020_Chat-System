@@ -20,6 +20,10 @@ function arraysAreEqual<T> (arr1: Array<T>, arr2: Array<T>): boolean {
   return JSON.stringify(arr1) === JSON.stringify(arr2);
 }
 
+const getSortedUsernamesFromChat = (chat: Chat): string[] => {
+  return chat.users.map(user => user.username).sort();
+}
+
 export const prepareChatForSaving = (groupChat: Chat): Chat => {
   const sortedUsers = groupChat.users.sort(cmpUsers)
   return {
@@ -32,11 +36,20 @@ export const chatAlreadyExists = (currentUserChats: Chat[], newChat: Chat): bool
   console.log('currentUserChatsCHAT: ', currentUserChats);
   console.log('newChat: ', newChat);
 
+  const newChatUsernames = getSortedUsernamesFromChat(newChat);
+
+  let check = false ;
   currentUserChats.forEach(chat => {
-    if (arraysAreEqual(chat.users, newChat.users)) {
-      console.log('chatAlreadyExists')
-      return true
+    const chatUsernames = getSortedUsernamesFromChat(chat);
+    console.log('newChatUsernames: ', newChatUsernames)
+    console.log('chatUsernames: ', chatUsernames)
+
+    if (JSON.stringify(newChatUsernames) === JSON.stringify(chatUsernames)) {
+      check = true;
     }
   })
-  return false
+
+  console.log('chatAlreadyExists: ', check);
+
+  return check
 }
