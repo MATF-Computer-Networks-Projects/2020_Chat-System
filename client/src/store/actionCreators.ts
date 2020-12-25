@@ -1,4 +1,8 @@
 import * as actionTypes from './actionTypes';
+import {
+  UserAction,
+  DispatchType,
+} from '../types'
 
 export const addUsername = (username: string) => {
   const action: UserAction = {

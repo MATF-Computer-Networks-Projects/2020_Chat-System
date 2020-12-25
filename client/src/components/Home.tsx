@@ -8,17 +8,21 @@ import Grid from '@material-ui/core/Grid';
 import { 
   ActiveUser,
   SingleMessage,
-  Chat
+  Chat,
+  UserState
 } from '../types';
+import * as chat from '../utils/chat';
+
 
 
 export default function Home () {  
   const history = useHistory();
 
-  const username = useSelector(
-    (state: UserState) => state.username,
+  const currentUser = useSelector(
+    (state: UserState) => state.currentUser,
     shallowEqual
   );
+  console.log('currentUser: ', currentUser)
 
   const [selectedUser, setSelectedUser] = useState<ActiveUser>();
   const [currentUserMessages, setCurrentUserMessages] = useState<SingleMessage[]>([]);
@@ -48,12 +52,16 @@ export default function Home () {
   }
 
   const updateCurrentUserChats = (newChat: Chat) => {
-    setCurrentUserChats([...currentUserChats, newChat]);
+    console.log('updateCurrentUserChats', newChat);
+    if (chat.chatAlreadyExists(currentUserChats, newChat)) {
+      return
+    }
+    setCurrentUserChats([...currentUserChats, chat.prepareChatForSaving(newChat)]);
   }
 
   useEffect(() => {
 
-    if(username === '') {
+    if(currentUser.username === '') {
       history.push('/');
       return;
     }
@@ -63,9 +71,11 @@ export default function Home () {
     height: '100%'
   }
   
+  console.log('currentUserChats: ', currentUserChats);
+
   return (    
     <div>
-      <h2> {`Logged in as: ${username}`} </h2>
+      <h2> {`Logged in as: ${currentUser.username}`} </h2>
       <div style={style}>
         <Grid container spacing={3}>
           <Grid item xs={3} >

@@ -12,6 +12,7 @@ import {
   socketEvents,
   SingleMessage,
   ActiveUser,
+  UserState,
 } from '../types';
 
 interface Props {
@@ -22,8 +23,8 @@ interface Props {
 
 export default function ChatTextbox(props: Props) {
   const socket = useSocket();
-  const userId = useSelector(
-    (state: UserState) => state.userId,
+  const currentUser = useSelector(
+    (state: UserState) => state.currentUser,
     shallowEqual
   );
 
@@ -35,7 +36,7 @@ export default function ChatTextbox(props: Props) {
       return;
     }
 
-    socket.on(socketEvents.RECEIVE_MESSAGE + userId, (data: SingleMessage) => {
+    socket.on(socketEvents.RECEIVE_MESSAGE + currentUser.userId, (data: SingleMessage) => {
       const newMessage: SingleMessage = {
         senderId: data.senderId,
         recipientId: data.recipientId,
@@ -63,7 +64,7 @@ export default function ChatTextbox(props: Props) {
     }
 
     const newMessage: SingleMessage = {
-      senderId: userId,
+      senderId: currentUser.userId,
       recipientId: props.selectedUser.userId,
       message,
       timestampUTC: Date.now(),
@@ -105,7 +106,7 @@ export default function ChatTextbox(props: Props) {
     
     const filteredMessages = props.currentUserMessages
       .filter(msg => 
-        (msg.senderId === userId && msg.recipientId === props.selectedUser?.userId) ||
+        (msg.senderId === currentUser.userId && msg.recipientId === props.selectedUser?.userId) ||
         (msg.senderId === props.selectedUser?.userId)
       )
       .sort((msg1, msg2) => msg1.timestampUTC - msg2.timestampUTC)
@@ -115,7 +116,7 @@ export default function ChatTextbox(props: Props) {
         <Grid container spacing={3}>
           {
             filteredMessages.map(message => {
-              const alignment = message.senderId === userId ? "right" : "left";
+              const alignment = message.senderId === currentUser.userId ? "right" : "left";
               return (
                 <Grid item xs={12} id={uuidv4()}>
                   <Box p={2} textAlign={alignment}>

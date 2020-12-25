@@ -4,7 +4,8 @@ import {
   ReceiveActiveUsersMessage,
   socketEvents,
   SingleMessage,
-  Chat
+  Chat,
+  UserState,
 } from '../types';
 import { useSocket } from '../contexts/SocketProvider';
 import List from '@material-ui/core/List';
@@ -45,35 +46,26 @@ export default function ActiveUsersList(props: Props) {
   const [requestedActiveUsers, setRequestedActiveUsers] = React.useState<boolean>(false);
   const classes = useStyles();
   
-  const userId = useSelector(
-    (state: UserState) => state.userId,
+  const currentUser = useSelector(
+    (state: UserState) => state.currentUser,
     shallowEqual
   );
-
-  const username = useSelector(
-    (state: UserState) => state.username,
-    shallowEqual
-  );
-
-  const createNewEmptyChatsIfNeeded = (activeUsers: ActiveUser[]) => {
-    activeUsers.forEach(user => {
-      if(!props.currentUserChats.find(chat => {
-        return (chat.type === 'single' && chat.users.includes(user))
-      })) {
-        const currentlyActiveUser: ActiveUser = {userId, username}
-        if(currentlyActiveUser === user) {
-          return;
-        }
-        const newChat: Chat = {
-          chatId: uuidv4(),
-          users: [currentlyActiveUser, user],
-          messages: [],
-          type: 'single'
-        }
-        props.updateCurrentUserChats(newChat)
-      }
-    })
-  }
+  // const createNewEmptyChatsIfNeeded = (activeUsers: ActiveUser[]) => {
+  //   console.log('createNewEmptyChatsIfNeeded')
+  //   console.log('activeUsers', activeUsers)
+        
+  //   activeUsers
+  //     .filter(user => user.userId !== currentUser.userId)
+  //     .forEach(user => {
+  //       const newChat: Chat = {
+  //         users: [currentUser, user],
+  //         messages: [],
+  //         type: 'single'
+  //       }
+  //       props.updateCurrentUserChats(newChat)
+  //     }
+  //   )
+  // }
 
   useEffect(() => {
 
@@ -82,8 +74,9 @@ export default function ActiveUsersList(props: Props) {
     }
 
     socket.on(socketEvents.RECEIVE_ACTIVE_USERS, (msg: ReceiveActiveUsersMessage) => {
+      console.log('RECEIVE_ACTIVE_USERS: ', msg.activeUsers);
       props.updateActiveUsers(msg.activeUsers);
-      createNewEmptyChatsIfNeeded(msg.activeUsers);
+      // createNewEmptyChatsIfNeeded(msg.activeUsers);
     })
   }, [socket]);
   
@@ -144,7 +137,7 @@ export default function ActiveUsersList(props: Props) {
           <List component='div' className={classes.root}>
             {
               props.activeUsers
-                .filter(user => user.userId !== userId)
+                .filter(user => user.userId !== currentUser.userId)
                 .map(user => (
                   <ListItem id={uuidv4()}>
                     <Paper style={{width: '100%'}}>

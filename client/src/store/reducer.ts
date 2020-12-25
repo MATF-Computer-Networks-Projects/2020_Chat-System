@@ -1,8 +1,17 @@
 import * as actionTypes from './actionTypes';
+import {
+  UserState,
+  UserAction,
+  Chat,
+
+} from '../types';
 
 const initialState: UserState = {
-  username: '',
-  userId: ''
+  currentUser: {
+    username: '',
+    userId: '',
+  },
+  currentUserChats: []
 }
 
 const reducer = ( state: UserState = initialState, action: UserAction): UserState => {
@@ -10,12 +19,23 @@ const reducer = ( state: UserState = initialState, action: UserAction): UserStat
     case actionTypes.ADD_USERNAME:
       return {
         ...state,
-        username: action.username as string
+        currentUser:{
+          userId: state.currentUser.userId,
+          username: action.username as string
+        }
       }
     case actionTypes.ADD_USER_ID:
       return {
         ...state,
-        userId: action.userId as string
+        currentUser: {
+          userId: action.userId as string,
+          username: state.currentUser.username as string,
+        }
+      }
+    case actionTypes.ADD_NEW_CHAT:
+      return {
+        ...state,
+        currentUserChats: [...state.currentUserChats, action.newChat as Chat]
       }
 
   }

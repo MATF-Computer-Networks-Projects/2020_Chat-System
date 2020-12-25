@@ -12,7 +12,8 @@ import {
 } from '@material-ui/core';
 import { 
   ActiveUser,
-  socketEvents
+  socketEvents,
+  UserState,
 } from '../types';
 import { shallowEqual, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,22 +28,22 @@ interface Props {
 
 export default function GroupChatsList(props: Props) {
   const socket = useSocket();
-  const userId = useSelector(
-    (state: UserState) => state.userId,
+  
+  const currentUser = useSelector(
+    (state: UserState) => state.currentUser,
     shallowEqual
   );
 
-  const username = useSelector(
-    (state: UserState) => state.username,
-    shallowEqual
-  );
-
-  const currentUser: ActiveUser = {userId, username};
 
   const [groupChat, setGroupChat] = useState<ActiveUser[]>([currentUser]);
   const [createNewGroupClicked, setCreateNewGroupClicked] = useState(false);
 
   useEffect(() => {
+
+    if(!socket) {
+      return;
+    }
+    
     socket.on(socketEvents.RECEIVE_GROUP_CHAT, (groupChat: ActiveUser[]) => {
       props.updateActiveGroupChats(groupChat);
     })
@@ -92,7 +93,7 @@ export default function GroupChatsList(props: Props) {
                     {
                       groupChat
                       .map(user => {
-                        if(user.userId === userId) {
+                        if(user.userId === currentUser.userId) {
                           return 'You'
                         }
                         return user.username
@@ -110,7 +111,6 @@ export default function GroupChatsList(props: Props) {
   }
 
   const generateActiveUsersCheckboxList = () => {
-    console.log('groupChat: ', groupChat);
     if(!props.activeUsers || !createNewGroupClicked) {
       return
     }
@@ -119,7 +119,7 @@ export default function GroupChatsList(props: Props) {
         <FormGroup>
           {
             props.activeUsers
-            .filter(user => user.userId !== userId)
+            .filter(user => user.userId !== currentUser.userId)
             .map(user => (
               <ListItem id={uuidv4()}>
                 <FormControlLabel

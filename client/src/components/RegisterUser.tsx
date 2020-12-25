@@ -2,6 +2,7 @@ import React, { FormEvent, useEffect } from 'react';
 import { 
   socketEvents, 
   errorMessages,
+  UserState
 } from '../types';
 import { Socket } from 'socket.io-client';
 import { useHistory } from 'react-router-dom';
@@ -22,13 +23,8 @@ export default function RegisterUser() {
   const history = useHistory();
   const socket = useSocket() as typeof Socket;
 
-  const userId = useSelector(
-    (state: UserState) => state.userId,
-    shallowEqual
-  );
-
-  const globalUsername = useSelector(
-    (state: UserState) => state.username,
+  const currentUser = useSelector(
+    (state: UserState) => state.currentUser,
     shallowEqual
   );
 
@@ -36,7 +32,7 @@ export default function RegisterUser() {
 
   useEffect(() => {
 
-    if(globalUsername !== '') {
+    if(currentUser.username !== '') {
       history.push('/home');
       return;
     }
@@ -66,13 +62,14 @@ export default function RegisterUser() {
         setErrorMsg(errorMessages.USERNAME_ALREADY_EXISTS);
         return;
       }
-      
-      socket.emit(socketEvents.SEND_USERNAME, {
-        userId,
-        username,
-      });
-
       addUsernameCallback(username);
+      console.log('currentUser', currentUser)
+      
+      const userId = currentUser.userId;
+
+      socket.emit(socketEvents.SEND_USERNAME, {userId, username});
+
+      
       history.push('/home');
     })
   }

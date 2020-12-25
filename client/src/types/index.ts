@@ -23,9 +23,7 @@ export const errorMessages = {
   BACKEND_UNREACHABLE: 'Backend unreachable.'
 }
 
-
 export interface Chat {
-  chatId: string,
   users: ActiveUser[],
   messages: SingleMessage[],
   type: 'single' | 'group'
@@ -48,3 +46,17 @@ export interface SingleMessage {
 export interface ReceiveActiveUsersMessage {
   activeUsers: ActiveUser[]
 }
+
+export interface UserState {
+  currentUser: ActiveUser,
+  currentUserChats: Chat[]
+}
+
+export type UserAction = {
+  type: string
+  username?: string
+  userId?: string
+  newChat?: Chat
+}
+  
+export type DispatchType = (args: UserAction) => UserAction

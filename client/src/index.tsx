@@ -6,6 +6,11 @@ import { Provider } from 'react-redux'
 import { applyMiddleware, createStore, Store } from 'redux'
 import reducer from './store/reducer';
 import thunk from 'redux-thunk';
+import {
+  UserState,
+  UserAction,
+  DispatchType,
+} from './types'
 
 const store: Store<UserState, UserAction> & {
   dispatch: DispatchType
