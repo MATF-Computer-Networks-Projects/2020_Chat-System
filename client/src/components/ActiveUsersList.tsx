@@ -28,7 +28,6 @@ interface Props {
   activeUsers: ActiveUser[] | undefined
   updateActiveUsers: Function
   
-  currentUserChats: Chat[],
   updateCurrentUserChats: Function
 }
 
@@ -50,22 +49,23 @@ export default function ActiveUsersList(props: Props) {
     (state: UserState) => state.currentUser,
     shallowEqual
   );
-  // const createNewEmptyChatsIfNeeded = (activeUsers: ActiveUser[]) => {
-  //   console.log('createNewEmptyChatsIfNeeded')
-  //   console.log('activeUsers', activeUsers)
+
+  const createNewEmptyChatsIfNeeded = (activeUsers: ActiveUser[]) => {
+    console.log('createNewEmptyChatsIfNeeded')
+    console.log('activeUsers', activeUsers)
         
-  //   activeUsers
-  //     .filter(user => user.userId !== currentUser.userId)
-  //     .forEach(user => {
-  //       const newChat: Chat = {
-  //         users: [currentUser, user],
-  //         messages: [],
-  //         type: 'single'
-  //       }
-  //       props.updateCurrentUserChats(newChat)
-  //     }
-  //   )
-  // }
+    activeUsers
+      .filter(user => user.userId !== currentUser.userId)
+      .forEach(user => {
+        const newChat: Chat = {
+          users: [currentUser, user],
+          messages: [],
+          type: 'single'
+        }
+        props.updateCurrentUserChats(newChat)
+      }
+    )
+  }
 
   useEffect(() => {
 
@@ -74,9 +74,8 @@ export default function ActiveUsersList(props: Props) {
     }
 
     socket.on(socketEvents.RECEIVE_ACTIVE_USERS, (msg: ReceiveActiveUsersMessage) => {
-      console.log('RECEIVE_ACTIVE_USERS: ', msg.activeUsers);
       props.updateActiveUsers(msg.activeUsers);
-      // createNewEmptyChatsIfNeeded(msg.activeUsers);
+      createNewEmptyChatsIfNeeded(msg.activeUsers);
     })
   }, [socket]);
   
@@ -122,7 +121,6 @@ export default function ActiveUsersList(props: Props) {
       setRequestedActiveUsers(true)
     }
 
-    console.log('currentUserChats: ', props.currentUserChats)
 
     if(!props.activeUsers) {
       return;

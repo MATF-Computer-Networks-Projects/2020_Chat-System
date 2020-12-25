@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useSelector, useDispatch } from 'react-redux';
+import { addNewChat } from '../store/actionCreators';
 import { useHistory } from 'react-router-dom';
 import ActiveUsersList from './ActiveUsersList';
 import GroupChatsList from './GroupChatsList';
@@ -17,16 +18,25 @@ import * as chat from '../utils/chat';
 
 export default function Home () {  
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const currentUser = useSelector(
     (state: UserState) => state.currentUser,
     shallowEqual
   );
-  console.log('currentUser: ', currentUser)
+
+  const currentUserChats = useSelector(
+    (state: UserState) => state.currentUserChats,
+    shallowEqual
+  );
+  
+  const addNewChatCallback = React.useCallback(
+    (newChat: Chat) => dispatch(addNewChat(newChat)),
+    [dispatch]
+  )
 
   const [selectedUser, setSelectedUser] = useState<ActiveUser>();
   const [currentUserMessages, setCurrentUserMessages] = useState<SingleMessage[]>([]);
-  const [currentUserChats, setCurrentUserChats] = useState<Chat[]>([]);
   const [activeUsers, setActiveUsers] = useState<ActiveUser[]>();
   const [activeGroupChats, setActiveGroupChats] = useState<Array<ActiveUser[]>>([]);
 
@@ -52,11 +62,7 @@ export default function Home () {
   }
 
   const updateCurrentUserChats = (newChat: Chat) => {
-    console.log('updateCurrentUserChats', newChat);
-    if (chat.chatAlreadyExists(currentUserChats, newChat)) {
-      return
-    }
-    setCurrentUserChats([...currentUserChats, chat.prepareChatForSaving(newChat)]);
+    addNewChatCallback(chat.prepareChatForSaving(newChat));
   }
 
   useEffect(() => {
@@ -71,7 +77,7 @@ export default function Home () {
     height: '100%'
   }
   
-  console.log('currentUserChats: ', currentUserChats);
+  console.log('currentUserChatsHOME: ', currentUserChats);
 
   return (    
     <div>
@@ -91,7 +97,6 @@ export default function Home () {
                   activeUsers={activeUsers}
                   updateActiveUsers={updateActiveUsers}
 
-                  currentUserChats={currentUserChats}
                   updateCurrentUserChats={updateCurrentUserChats}
                 />  
               </Grid>

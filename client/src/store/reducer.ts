@@ -5,6 +5,7 @@ import {
   Chat,
 
 } from '../types';
+import * as chat from '../utils/chat';
 
 const initialState: UserState = {
   currentUser: {
@@ -33,6 +34,9 @@ const reducer = ( state: UserState = initialState, action: UserAction): UserStat
         }
       }
     case actionTypes.ADD_NEW_CHAT:
+      if (chat.chatAlreadyExists(state.currentUserChats, action.newChat as Chat)) {
+        return state;
+      }
       return {
         ...state,
         currentUserChats: [...state.currentUserChats, action.newChat as Chat]

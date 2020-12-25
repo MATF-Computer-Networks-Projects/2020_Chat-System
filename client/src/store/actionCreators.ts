@@ -2,6 +2,7 @@ import * as actionTypes from './actionTypes';
 import {
   UserAction,
   DispatchType,
+  Chat,
 } from '../types'
 
 export const addUsername = (username: string) => {
@@ -16,6 +17,14 @@ export const addUserId = (userId: string) => {
   const action: UserAction = {
     type: actionTypes.ADD_USER_ID,
     userId,
+  }
+  return dispatchAction(action)
+}
+
+export const addNewChat = (newChat: Chat) => {
+  const action: UserAction = {
+    type: actionTypes.ADD_NEW_CHAT,
+    newChat,
   }
   return dispatchAction(action)
 }

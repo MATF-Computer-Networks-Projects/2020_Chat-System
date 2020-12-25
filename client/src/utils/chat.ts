@@ -14,6 +14,9 @@ const cmpUsers = (a: ActiveUser, b: ActiveUser): number => {
 } 
 
 function arraysAreEqual<T> (arr1: Array<T>, arr2: Array<T>): boolean {
+  
+  console.log('comparing: ', arr1);
+  console.log('comparing: ', arr2);
   return JSON.stringify(arr1) === JSON.stringify(arr2);
 }
 
@@ -26,12 +29,12 @@ export const prepareChatForSaving = (groupChat: Chat): Chat => {
 }
 
 export const chatAlreadyExists = (currentUserChats: Chat[], newChat: Chat): boolean => {
-  console.log('chatAlreadyExists')
-  console.log('currentUserChats: ', currentUserChats);
+  console.log('currentUserChatsCHAT: ', currentUserChats);
   console.log('newChat: ', newChat);
 
   currentUserChats.forEach(chat => {
     if (arraysAreEqual(chat.users, newChat.users)) {
+      console.log('chatAlreadyExists')
       return true
     }
   })
