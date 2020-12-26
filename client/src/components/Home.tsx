@@ -62,6 +62,7 @@ export default function Home () {
   }
 
   const updateSingleUserChat = (updatedChat: Chat) => {
+    console.log('updateSingleUserChat: ', updatedChat)
     updateSingleChatCallback(updatedChat);
   }
 
@@ -93,6 +94,8 @@ export default function Home () {
                   updateActiveUsers={updateActiveUsers}
 
                   updateCurrentUserChats={updateCurrentUserChats}
+                  updateSingleUserChat={updateSingleUserChat}
+
                 />  
               </Grid>
               <Grid item xs={12}>

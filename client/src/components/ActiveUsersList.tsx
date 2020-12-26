@@ -16,7 +16,7 @@ import Grid from '@material-ui/core/Grid';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { v4 as uuidv4 } from 'uuid';
 import { shallowEqual, useSelector } from 'react-redux';
-
+import * as chat from '../utils/chat';
 interface Props {
   updateSelectedUser: Function
   selectedUser: ActiveUser | undefined
@@ -25,6 +25,7 @@ interface Props {
   updateActiveUsers: Function
   
   updateCurrentUserChats: Function
+  updateSingleUserChat: Function
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -43,6 +44,11 @@ export default function ActiveUsersList(props: Props) {
   
   const currentUser = useSelector(
     (state: UserState) => state.currentUser,
+    shallowEqual
+  );
+
+  const currentUserChats = useSelector(
+    (state: UserState) => state.currentUserChats,
     shallowEqual
   );
 
@@ -72,33 +78,41 @@ export default function ActiveUsersList(props: Props) {
     })
   }, [socket]);
   
-  // const hasUnseenMessagesFromThisUser = (selectedUser: ActiveUser) => {
+  const hasUnseenMessagesFromCurrentChat = (user: ActiveUser) => {
 
-  //   if (props.selectedUser && selectedUser.userId === props.selectedUser.userId) {
-  //     return false;
-  //   }
+    console.log('hasUnseenMessagesFromCurrentChat: ', user);
 
-  //   if(props.currentUserMessages.find(msg => msg.senderId === selectedUser.userId && msg.seen === false)) {
-  //     return true;
-  //   }
-  //   return false;
-  // }
+    const targetChat = chat.findChatByUsers(currentUserChats, [user, currentUser])
+    if (!targetChat) {
+      return false 
+    }
+    console.log('dosao 3');
 
-  const handleOnClick = (selectedUser: ActiveUser) => {
-    // const updatedCurrentUserMessages = props.currentUserMessages.map(
-    //   msg => {
-    //     if (msg.senderId === selectedUser.userId && msg.seen === false) {
-    //       return {
-    //         ...msg,
-    //         seen: true
-    //       }
-    //     } 
-    //     return msg  
-    //   }
-    // )
 
-    props.updateSelectedUser(selectedUser);
-    // props.overwriteCurrentUserMessages(updatedCurrentUserMessages);
+    if (targetChat.messages.find(msg => msg.sender.userId === user.userId && msg.seen === false)) {
+      return true;
+    }
+    console.log('kurcina');
+    return false;
+  }
+
+  const handleOnClick = (newSelectedUser: ActiveUser) => {
+    const targetChat = chat.findChatByUsers(currentUserChats, [currentUser, newSelectedUser])
+    if (!targetChat) {
+      return
+    }
+
+    const updatedChatMessages = targetChat.messages.map(msg => {
+      return {...msg, seen: true}
+    });
+
+    const updatedChat = {
+      ...targetChat,
+      messages: updatedChatMessages
+    }
+
+    props.updateSingleUserChat(updatedChat);
+    props.updateSelectedUser(newSelectedUser);
   }
 
   const generateActiveUsers = () => {
@@ -136,7 +150,7 @@ export default function ActiveUsersList(props: Props) {
                         p={2} 
                         m={1} 
                         fontSize='h6.fontSize' 
-                        // fontWeight={hasUnseenMessagesFromThisUser(user) ? "fontWeightBold" : "fontWeightRegular"}
+                        fontWeight={hasUnseenMessagesFromCurrentChat(user) ? "fontWeightBold" : "fontWeightRegular"}
                         onClick={() => handleOnClick(user)}
                       >
                         {user.username}
