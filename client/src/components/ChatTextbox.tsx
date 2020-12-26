@@ -13,12 +13,13 @@ import {
   SingleMessage,
   ActiveUser,
   UserState,
+  Chat,
 } from '../types';
+import * as chat from '../utils/chat';
 
 interface Props {
   selectedUser: ActiveUser | undefined
-  updateCurrentUserMessages: Function
-  currentUserMessages: SingleMessage[]
+  updateSingleUserChat: Function
 }
 
 export default function ChatTextbox(props: Props) {
@@ -28,7 +29,32 @@ export default function ChatTextbox(props: Props) {
     shallowEqual
   );
 
+  const currentUserChats = useSelector(
+    (state: UserState) => state.currentUserChats,
+    shallowEqual
+  );
+
+
   const [message, setMessage] = useState('');
+
+  const addNewMessageToChat = (newMessage: SingleMessage) => {
+    const chatForUpdate = chat.findChatByUsers(currentUserChats, [...newMessage.receivers, newMessage.sender])
+    
+    console.log('chatForUpdateKURCINA: ', chatForUpdate);
+    if(!chatForUpdate) {
+      return
+    }
+
+    const updatedChat: Chat = {
+      ...chatForUpdate,
+      messages: [...chatForUpdate.messages, newMessage]
+    }
+
+    console.log('addNewMessageToChat->updatedChat: ', updatedChat);
+
+    props.updateSingleUserChat(updatedChat);
+  }
+
 
   useEffect(() => {
 
@@ -38,13 +64,15 @@ export default function ChatTextbox(props: Props) {
 
     socket.on(socketEvents.RECEIVE_MESSAGE + currentUser.userId, (data: SingleMessage) => {
       const newMessage: SingleMessage = {
-        senderId: data.senderId,
-        recipientId: data.recipientId,
+        sender: data.sender,
+        receivers: data.receivers,
         message: data.message,
         timestampUTC: data.timestampUTC,
         seen: data.seen,
       }
-      props.updateCurrentUserMessages(newMessage)
+      console.log('RECEIVE_MESSAGE: ', socketEvents.RECEIVE_MESSAGE + currentUser.userId)
+      console.log('received new message: ', data);
+      addNewMessageToChat(newMessage);
     })
   });
   
@@ -52,9 +80,7 @@ export default function ChatTextbox(props: Props) {
     setMessage(e.currentTarget.value);
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleSend = () => {
     if(message === '') {
       return;
     }
@@ -64,21 +90,20 @@ export default function ChatTextbox(props: Props) {
     }
 
     const newMessage: SingleMessage = {
-      senderId: currentUser.userId,
-      recipientId: props.selectedUser.userId,
+      sender: currentUser,
+      receivers: [props.selectedUser],
       message,
       timestampUTC: Date.now(),
       seen: false,
     }
 
-    props.updateCurrentUserMessages(newMessage)
+    addNewMessageToChat(newMessage)
     socket.emit(socketEvents.SEND_MESSAGE, newMessage)
     setMessage('');
   }
 
   const generateInputFieldAndButton = () => {
     return (
-      <form onSubmit={handleSubmit}>
       <Grid container spacing={3}>
         <Grid item xs={10} >
           <TextField
@@ -93,30 +118,38 @@ export default function ChatTextbox(props: Props) {
           <Button
             type='submit'
             fullWidth
+            onClick={handleSend}
           >
             Send
           </Button>
         </Grid>
       </Grid>
-      </form>
     )  
   }
 
   const generateMessageBox = () => {    
     
-    const filteredMessages = props.currentUserMessages
-      .filter(msg => 
-        (msg.senderId === currentUser.userId && msg.recipientId === props.selectedUser?.userId) ||
-        (msg.senderId === props.selectedUser?.userId)
-      )
+    if (!props.selectedUser) {
+      return;
+    }
+
+    const currentChat = chat.findChatByUsers(currentUserChats, [currentUser, props.selectedUser]);
+    console.log('generateMessageBox->currentChat: ', currentChat)
+    
+    if (!currentChat) {
+      return;
+    }
+
+
+    const sortedMessages = currentChat.messages
       .sort((msg1, msg2) => msg1.timestampUTC - msg2.timestampUTC)
 
     return (
       <Paper>
         <Grid container spacing={3}>
           {
-            filteredMessages.map(message => {
-              const alignment = message.senderId === currentUser.userId ? "right" : "left";
+            sortedMessages.map(message => {
+              const alignment = JSON.stringify(message.sender) === JSON.stringify(currentUser) ? "right" : "left";
               return (
                 <Grid item xs={12} id={uuidv4()}>
                   <Box p={2} textAlign={alignment}>
@@ -139,7 +172,7 @@ export default function ChatTextbox(props: Props) {
     )
   }
 
-  if(!props.selectedUser && props.currentUserMessages === []) {
+  if(!props.selectedUser) {
     return (
       <div>
         {generateUserNotSelectedMessage()}

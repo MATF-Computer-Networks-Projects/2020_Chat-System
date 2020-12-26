@@ -22,9 +22,6 @@ interface Props {
   updateSelectedUser: Function
   selectedUser: ActiveUser | undefined
   
-  overwriteCurrentUserMessages: Function
-  currentUserMessages: SingleMessage[]
-  
   activeUsers: ActiveUser[] | undefined
   updateActiveUsers: Function
   
@@ -50,10 +47,7 @@ export default function ActiveUsersList(props: Props) {
     shallowEqual
   );
 
-  const createNewEmptyChatsIfNeeded = (activeUsers: ActiveUser[]) => {
-    console.log('createNewEmptyChatsIfNeeded')
-    console.log('activeUsers', activeUsers)
-        
+  const createNewEmptyChatsIfNeeded = (activeUsers: ActiveUser[]) => {    
     activeUsers
       .filter(user => user.userId !== currentUser.userId)
       .forEach(user => {
@@ -79,33 +73,33 @@ export default function ActiveUsersList(props: Props) {
     })
   }, [socket]);
   
-  const hasUnseenMessagesFromThisUser = (selectedUser: ActiveUser) => {
+  // const hasUnseenMessagesFromThisUser = (selectedUser: ActiveUser) => {
 
-    if (props.selectedUser && selectedUser.userId === props.selectedUser.userId) {
-      return false;
-    }
+  //   if (props.selectedUser && selectedUser.userId === props.selectedUser.userId) {
+  //     return false;
+  //   }
 
-    if(props.currentUserMessages.find(msg => msg.senderId === selectedUser.userId && msg.seen === false)) {
-      return true;
-    }
-    return false;
-  }
+  //   if(props.currentUserMessages.find(msg => msg.senderId === selectedUser.userId && msg.seen === false)) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   const handleOnClick = (selectedUser: ActiveUser) => {
-    const updatedCurrentUserMessages = props.currentUserMessages.map(
-      msg => {
-        if (msg.senderId === selectedUser.userId && msg.seen === false) {
-          return {
-            ...msg,
-            seen: true
-          }
-        } 
-        return msg  
-      }
-    )
+    // const updatedCurrentUserMessages = props.currentUserMessages.map(
+    //   msg => {
+    //     if (msg.senderId === selectedUser.userId && msg.seen === false) {
+    //       return {
+    //         ...msg,
+    //         seen: true
+    //       }
+    //     } 
+    //     return msg  
+    //   }
+    // )
 
     props.updateSelectedUser(selectedUser);
-    props.overwriteCurrentUserMessages(updatedCurrentUserMessages);
+    // props.overwriteCurrentUserMessages(updatedCurrentUserMessages);
   }
 
   const generateActiveUsers = () => {
@@ -143,7 +137,7 @@ export default function ActiveUsersList(props: Props) {
                         p={2} 
                         m={1} 
                         fontSize='h6.fontSize' 
-                        fontWeight={hasUnseenMessagesFromThisUser(user) ? "fontWeightBold" : "fontWeightRegular"}
+                        // fontWeight={hasUnseenMessagesFromThisUser(user) ? "fontWeightBold" : "fontWeightRegular"}
                         onClick={() => handleOnClick(user)}
                       >
                         {user.username}

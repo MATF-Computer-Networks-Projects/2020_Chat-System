@@ -29,6 +29,14 @@ export const addNewChat = (newChat: Chat) => {
   return dispatchAction(action)
 }
 
+export const updateSingleChat = (updatedChat: Chat) => {
+  const action: UserAction = {
+    type: actionTypes.UPDATE_SINGLE_CHAT,
+    updatedChat
+  }
+  return dispatchAction(action)
+}
+
 
 export const dispatchAction = (action: UserAction) => {
   return (dispatch: DispatchType) => {

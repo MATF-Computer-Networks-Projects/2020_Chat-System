@@ -35,8 +35,8 @@ export interface ActiveUser {
 }
 
 export interface SingleMessage {
-  senderId: string, 
-  recipientId: string,
+  sender: ActiveUser, 
+  receivers: ActiveUser[],
   message: string,
   timestampUTC: number,
   seen: boolean,
@@ -57,6 +57,7 @@ export type UserAction = {
   username?: string
   userId?: string
   newChat?: Chat
+  updatedChat?: Chat
 }
   
 export type DispatchType = (args: UserAction) => UserAction

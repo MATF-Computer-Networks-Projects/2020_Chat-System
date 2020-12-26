@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { shallowEqual, useSelector, useDispatch } from 'react-redux';
-import { addNewChat } from '../store/actionCreators';
+import { addNewChat, updateSingleChat } from '../store/actionCreators';
 import { useHistory } from 'react-router-dom';
 import ActiveUsersList from './ActiveUsersList';
 import GroupChatsList from './GroupChatsList';
@@ -35,22 +35,18 @@ export default function Home () {
     [dispatch]
   )
 
+  const updateSingleChatCallback = React.useCallback(
+    (updatedChat: Chat) => dispatch(updateSingleChat(updatedChat)),
+    [dispatch]
+  )
+
   const [selectedUser, setSelectedUser] = useState<ActiveUser>();
-  const [currentUserMessages, setCurrentUserMessages] = useState<SingleMessage[]>([]);
   const [activeUsers, setActiveUsers] = useState<ActiveUser[]>();
   const [activeGroupChats, setActiveGroupChats] = useState<Array<ActiveUser[]>>([]);
 
 
   const updateSelectedUser = (newSelectedUser: ActiveUser) => {
     setSelectedUser(newSelectedUser);
-  }
-
-  const updateCurrentUserMessages = (newMessage: SingleMessage) => {
-    setCurrentUserMessages([...currentUserMessages, newMessage])
-  }
-
-  const overwriteCurrentUserMessages = (newMessages: SingleMessage[]) => {
-    setCurrentUserMessages(newMessages);
   }
 
   const updateActiveUsers = (newActiveUsers: ActiveUser[]) => {
@@ -62,7 +58,11 @@ export default function Home () {
   }
 
   const updateCurrentUserChats = (newChat: Chat) => {
-    addNewChatCallback(newChat);
+    addNewChatCallback(newChat)
+  }
+
+  const updateSingleUserChat = (updatedChat: Chat) => {
+    updateSingleChatCallback(updatedChat);
   }
 
   useEffect(() => {
@@ -90,10 +90,7 @@ export default function Home () {
                 <ActiveUsersList 
                   updateSelectedUser={updateSelectedUser} 
                   selectedUser={selectedUser}
-                  
-                  overwriteCurrentUserMessages={overwriteCurrentUserMessages}
-                  currentUserMessages={currentUserMessages}
-                  
+                
                   activeUsers={activeUsers}
                   updateActiveUsers={updateActiveUsers}
 
@@ -112,8 +109,7 @@ export default function Home () {
           <Grid item xs={6} >
             <ChatTextbox  
               selectedUser={selectedUser} 
-              updateCurrentUserMessages={updateCurrentUserMessages}
-              currentUserMessages={currentUserMessages}
+              updateSingleUserChat={updateSingleUserChat}
             />
           </Grid>
         </Grid>

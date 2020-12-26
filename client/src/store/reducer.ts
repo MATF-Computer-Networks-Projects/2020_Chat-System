@@ -41,6 +41,11 @@ const reducer = ( state: UserState = initialState, action: UserAction): UserStat
         ...state,
         currentUserChats: [...state.currentUserChats, action.newChat as Chat]
       }
+    case actionTypes.UPDATE_SINGLE_CHAT:
+      return {
+        ...state,
+        currentUserChats: chat.updateSingleChat(state.currentUserChats, action.updatedChat as Chat)
+      }
 
   }
   return state
