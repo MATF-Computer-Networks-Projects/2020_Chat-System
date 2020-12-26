@@ -77,8 +77,6 @@ export default function Home () {
     height: '100%'
   }
   
-  console.log('currentUserChatsHOME: ', currentUserChats);
-
   return (    
     <div>
       <h2> {`Logged in as: ${currentUser.username}`} </h2>

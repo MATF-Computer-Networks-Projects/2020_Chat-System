@@ -39,8 +39,6 @@ export default function ChatTextbox(props: Props) {
 
   const addNewMessageToChat = (newMessage: SingleMessage) => {
     const chatForUpdate = chat.findChatByUsers(currentUserChats, [...newMessage.receivers, newMessage.sender])
-    
-    console.log('chatForUpdateKURCINA: ', chatForUpdate);
     if(!chatForUpdate) {
       return
     }
@@ -49,9 +47,6 @@ export default function ChatTextbox(props: Props) {
       ...chatForUpdate,
       messages: [...chatForUpdate.messages, newMessage]
     }
-
-    console.log('addNewMessageToChat->updatedChat: ', updatedChat);
-
     props.updateSingleUserChat(updatedChat);
   }
 
@@ -70,8 +65,6 @@ export default function ChatTextbox(props: Props) {
         timestampUTC: data.timestampUTC,
         seen: data.seen,
       }
-      console.log('RECEIVE_MESSAGE: ', socketEvents.RECEIVE_MESSAGE + currentUser.userId)
-      console.log('received new message: ', data);
       addNewMessageToChat(newMessage);
     })
   });
@@ -80,12 +73,14 @@ export default function ChatTextbox(props: Props) {
     setMessage(e.currentTarget.value);
   }
 
-  const handleSend = () => {
+  const handleSend = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    
     if(message === '') {
       return;
     }
 
-    if(!props.selectedUser || !props.selectedUser.userId) {
+    if(!props.selectedUser) {
       return
     }
 
@@ -104,6 +99,7 @@ export default function ChatTextbox(props: Props) {
 
   const generateInputFieldAndButton = () => {
     return (
+      <form onSubmit={handleSend}>
       <Grid container spacing={3}>
         <Grid item xs={10} >
           <TextField
@@ -118,12 +114,12 @@ export default function ChatTextbox(props: Props) {
           <Button
             type='submit'
             fullWidth
-            onClick={handleSend}
           >
             Send
           </Button>
         </Grid>
       </Grid>
+      </form>
     )  
   }
 

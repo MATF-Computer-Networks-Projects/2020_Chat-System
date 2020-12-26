@@ -33,23 +33,15 @@ export const updateSingleChat = (currentUserChats: Chat[], updatedChat: Chat): C
 }
 
 export const findChatByUsers = (currentUserChats: Chat[], users: ActiveUser[]): Chat | undefined => {
-  console.log('findChatByUsers->currentUserChats: ', currentUserChats);
-  console.log('findChatByUsers->users: ', users);
-  
   const sortedUsernames = users.map(user => user.username).sort();
   let toReturn;
   currentUserChats.forEach(chat => {
     const chatUsernames = getSortedUsernamesFromChat(chat)
 
-    console.log('sortedUsernames: ', sortedUsernames)
-    console.log('chatUsernames: ', chatUsernames)
-
     if(JSON.stringify(chatUsernames) === JSON.stringify(sortedUsernames)) {
-      console.log('Usao ovde')
       toReturn = chat;
 
     } 
   })
-  console.log('toReturn: ', toReturn)
   return toReturn;
 }

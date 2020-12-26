@@ -63,7 +63,6 @@ export default function RegisterUser() {
         return;
       }
       addUsernameCallback(username);
-      console.log('currentUser', currentUser)
       
       const userId = currentUser.userId;
 
