@@ -17,14 +17,14 @@ export const socketEvents = {
   RECEIVE_GROUP_CHAT: 'receiveGroupChat',
 }
 
-export interface ClientUserData {
+export interface ActiveUser {
   username: string
   userId: string
 }
 
 export interface SingleMessage {
-  senderId: string, 
-  recipientId: string,
+  sender: ActiveUser, 
+  receivers: ActiveUser[],
   message: string,
   timestampUTC: number,
   seen: boolean,

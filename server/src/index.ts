@@ -4,7 +4,7 @@ import express from 'express';
 import { 
   socketEvents, 
   SendActiveUsersMessage,
-  ClientUserData,
+  ActiveUser,
   SingleMessage,
 } from './types';
 
@@ -17,12 +17,12 @@ const io = require('socket.io')(server, {
   }
 });
 
-let activeUsers: ClientUserData[] = [];
+let activeUsers: ActiveUser[] = [];
 
 io.on(socketEvents.CONNECTION, (socket: Socket) => {
   console.log('User connected: ', socket.id);
   
-  socket.on(socketEvents.SEND_USERNAME, (msg: ClientUserData) => {
+  socket.on(socketEvents.SEND_USERNAME, (msg: ActiveUser) => {
 
     if(!msg.username) {
       return;
@@ -61,16 +61,19 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
     
     console.log('SEND_MESSAGE: ', msg)
 
-    console.log('RECEIVER: ', socketEvents.RECEIVE_MESSAGE + msg.recipientId);
+    console.log('RECEIVERS: ',msg.receivers);
 
-    socket.broadcast.emit(socketEvents.RECEIVE_MESSAGE + msg.recipientId, {
-      senderId: msg.senderId,
-      recipientId: msg.recipientId,
-      message: msg.message,
-      timestampUTC: msg.timestampUTC,
-      seen: msg.seen,
+    msg.receivers.forEach(receiver => {
+      const newMessage: SingleMessage = {
+        sender: msg.sender,
+        receivers: msg.receivers,
+        message: msg.message,
+        timestampUTC: msg.timestampUTC,
+        seen: msg.seen,
+      }
+      console.log('RECEIVE_MESSAGE: ', socketEvents.RECEIVE_MESSAGE + receiver.userId)
+      socket.broadcast.emit(socketEvents.RECEIVE_MESSAGE + receiver.userId, newMessage)
     })
-
   })
 
   socket.on(socketEvents.CHECK_USERNAME, (username: string) => {
