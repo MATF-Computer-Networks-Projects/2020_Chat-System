@@ -130,7 +130,6 @@ export default function ChatTextbox(props: Props) {
     }
 
     const currentChat = chat.findChatByUsers(currentUserChats, [currentUser, props.selectedUser]);
-    console.log('generateMessageBox->currentChat: ', currentChat)
     
     if (!currentChat) {
       return;
@@ -147,7 +146,7 @@ export default function ChatTextbox(props: Props) {
             sortedMessages.map(message => {
               const alignment = JSON.stringify(message.sender) === JSON.stringify(currentUser) ? "right" : "left";
               return (
-                <Grid item xs={12} id={uuidv4()}>
+                <Grid item xs={12} key={uuidv4()}>
                   <Box p={2} textAlign={alignment}>
                     {message.message}
                   </Box>

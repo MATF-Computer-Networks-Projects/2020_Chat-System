@@ -17,7 +17,6 @@ import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { v4 as uuidv4 } from 'uuid';
 import { shallowEqual, useSelector } from 'react-redux';
 
-
 interface Props {
   updateSelectedUser: Function
   selectedUser: ActiveUser | undefined
@@ -131,7 +130,7 @@ export default function ActiveUsersList(props: Props) {
               props.activeUsers
                 .filter(user => user.userId !== currentUser.userId)
                 .map(user => (
-                  <ListItem id={uuidv4()}>
+                  <ListItem key={uuidv4()}>
                     <Paper style={{width: '100%'}}>
                       <Box 
                         p={2} 
