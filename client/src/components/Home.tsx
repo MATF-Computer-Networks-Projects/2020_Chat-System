@@ -90,8 +90,14 @@ export default function Home () {
               </Grid>
               <Grid item xs={12}>
                 <GroupChatsList
+                  updateSelectedChat={updateSelectedChat} 
+                  selectedChat={selectedChat}
+                
                   activeUsers={activeUsers}
+                  updateActiveUsers={updateActiveUsers}
+
                   updateCurrentUserChats={updateCurrentUserChats}
+                  updateSingleUserChat={updateSingleUserChat}
                 />
               </Grid>
             </Grid>

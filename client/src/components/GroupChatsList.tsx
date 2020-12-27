@@ -20,10 +20,17 @@ import { shallowEqual, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
 import { useSocket } from '../contexts/SocketProvider';
+import * as chat from '../utils/chat';
 
 interface Props {
+  updateSelectedChat: Function
+  selectedChat: Chat | undefined
+  
   activeUsers: ActiveUser[] | undefined
+  updateActiveUsers: Function
+  
   updateCurrentUserChats: Function
+  updateSingleUserChat: Function
 }
 
 export default function GroupChatsList(props: Props) {
@@ -81,25 +88,56 @@ export default function GroupChatsList(props: Props) {
     setCreateNewGroupClicked(false)
   }
 
+  const handleOnClick = (newSelectedChat: Chat) => {
+    const targetChat = chat.findChatByUsers(currentUserChats, newSelectedChat.users)
+    if (!targetChat) {
+      return
+    }
+
+    const updatedChatMessages = targetChat.messages.map(msg => {
+      return {...msg, seen: true}
+    });
+
+    const updatedChat = {
+      ...targetChat,
+      messages: updatedChatMessages
+    }
+
+    props.updateSingleUserChat(updatedChat);
+    props.updateSelectedChat(newSelectedChat);
+  }
+
+  const hasUnseenMessagesFromCurrentChat = (currentChat: Chat) => {
+    const targetChat = chat.findChatByUsers(currentUserChats, currentChat.users)
+    if (!targetChat) {
+      return false 
+    }
+
+    if (targetChat.messages.find(msg => msg.sender.userId !== currentUser.userId && msg.seen === false)) {
+      return true;
+    }
+
+    return false;
+  }
+
   const generateActiveGroupChats = () => {
     return (
       <List component='div'>
         {
           currentUserChats
             .filter(chat => chat.type === "group")
-            .map(groupChat => (
+            .map(chat => (
               <ListItem key={uuidv4()}>
                 <Paper style={{width: '100%'}}>
                   <Box 
                     p={2} 
                     m={1} 
                     fontSize='h6.fontSize' 
-                    fontWeight="fontWeightRegular"
-                    // fontWeight={hasUnseenMessagesFromThisUser(user) ? "fontWeightBold" : "fontWeightRegular"}
-                    // onClick={() => handleOnClick(user)}
+                    fontWeight={hasUnseenMessagesFromCurrentChat(chat) ? "fontWeightBold" : "fontWeightRegular"}
+                    onClick={() => handleOnClick(chat)}
                   >
                     {
-                      groupChat.users
+                      chat.users
                       .map(user => {
                         if(user.userId === currentUser.userId) {
                           return 'You'
