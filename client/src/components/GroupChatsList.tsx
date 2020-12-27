@@ -39,13 +39,8 @@ export default function GroupChatsList(props: Props) {
     shallowEqual
   );
 
-  const emptyGroupChat: Chat = {
-    users: [currentUser],
-    messages: [],
-    type: "group"
-  }
-
-  const [groupChat, setGroupChat] = useState<Chat>(emptyGroupChat);
+  
+  const [usersForNewChat, setUsersForNewChat] = useState<ActiveUser[]>([currentUser]);
   const [createNewGroupClicked, setCreateNewGroupClicked] = useState(false);
 
   useEffect(() => {
@@ -54,45 +49,40 @@ export default function GroupChatsList(props: Props) {
       return;
     }
     
-    socket.on(socketEvents.RECEIVE_GROUP_CHAT + currentUser.userId , (groupChat: Chat) => {
+    socket.on(socketEvents.RECEIVE_GROUP_CHAT + currentUser.userId , (newGroupChat: Chat) => {
       console.log('RECEIVE_GROUP_CHAT')
-      props.updateCurrentUserChats(groupChat);
+      props.updateCurrentUserChats(newGroupChat);
     })
   }, [socket]);
   
   
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('handleCheckBoxChange is checked', e.target.checked);
-    const selectedUser: ActiveUser = {
-      userId: e.target.id,
-      username: e.target.name
-    }
-
-
-    if(e.target.checked) {
-      setGroupChat({
-        ...groupChat, 
-        users: [...groupChat.users, selectedUser]})
+  const handleCheckboxClick = (selectedUser: ActiveUser) => {
+    let updatedUsers = usersForNewChat
+    if (!usersForNewChat.map(u => u.userId).includes(selectedUser.userId)) {
+      updatedUsers.push(selectedUser)
+      setUsersForNewChat(updatedUsers)
     } else {
-      const filteredOutUsers = groupChat.users.filter(user => user.userId !== selectedUser.userId)
-      setGroupChat({
-        ...groupChat,
-        users: filteredOutUsers
-      });
+      setUsersForNewChat(updatedUsers.filter(user => user.userId !== selectedUser.userId));
     }
 
-    console.log('groupChat: ', groupChat)
   }
 
   const handleConfirm = () => {
-    if (groupChat.users.length === 1 ) {
+    if (usersForNewChat.length === 1 ) {
       return;
     }
 
-    socket.emit(socketEvents.SEND_GROUP_CHAT, groupChat)
-    props.updateCurrentUserChats(groupChat)
+    console.log('usersForNewChat: ', usersForNewChat);
+    const newGroupChat: Chat = {
+      users: usersForNewChat,
+      messages: [],
+      type: "group"
+    }
+
+    socket.emit(socketEvents.SEND_GROUP_CHAT, newGroupChat)
+    props.updateCurrentUserChats(newGroupChat)
     
-    setGroupChat(emptyGroupChat);
+    setUsersForNewChat([currentUser]);
     setCreateNewGroupClicked(false)
   }
 
@@ -101,7 +91,7 @@ export default function GroupChatsList(props: Props) {
       <List component='div'>
         {
           currentUserChats
-            .filter(chat => chat.type == "group")
+            .filter(chat => chat.type === "group")
             .map(groupChat => (
               <ListItem key={uuidv4()}>
                 <Paper style={{width: '100%'}}>
@@ -148,10 +138,10 @@ export default function GroupChatsList(props: Props) {
                 <FormControlLabel
                   control={
                     <Checkbox 
-                      onChange={handleCheckboxChange} 
+                      onClick={() => handleCheckboxClick(user)} 
                       name={user.username} 
                       id={user.userId}
-                      defaultChecked={false}
+                      defaultChecked={usersForNewChat.map(user => user.userId).includes(user.userId)}
                     />}
                   label={user.username}
                 />
