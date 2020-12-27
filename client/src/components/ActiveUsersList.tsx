@@ -18,8 +18,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { shallowEqual, useSelector } from 'react-redux';
 import * as chat from '../utils/chat';
 interface Props {
-  updateSelectedUser: Function
-  selectedUser: ActiveUser | undefined
+  updateSelectedChat: Function
+  selectedChat: Chat | undefined
   
   activeUsers: ActiveUser[] | undefined
   updateActiveUsers: Function
@@ -78,21 +78,21 @@ export default function ActiveUsersList(props: Props) {
     })
   }, [socket]);
   
-  const hasUnseenMessagesFromCurrentChat = (user: ActiveUser) => {
-    const targetChat = chat.findChatByUsers(currentUserChats, [user, currentUser])
+  const hasUnseenMessagesFromCurrentChat = (currentChat: Chat) => {
+    const targetChat = chat.findChatByUsers(currentUserChats, currentChat.users)
     if (!targetChat) {
       return false 
     }
 
-    if (targetChat.messages.find(msg => msg.sender.userId === user.userId && msg.seen === false)) {
+    if (targetChat.messages.find(msg => msg.sender.userId !== currentUser.userId && msg.seen === false)) {
       return true;
     }
 
     return false;
   }
 
-  const handleOnClick = (newSelectedUser: ActiveUser) => {
-    const targetChat = chat.findChatByUsers(currentUserChats, [currentUser, newSelectedUser])
+  const handleOnClick = (newSelectedChat: Chat) => {
+    const targetChat = chat.findChatByUsers(currentUserChats, newSelectedChat.users)
     if (!targetChat) {
       return
     }
@@ -107,7 +107,7 @@ export default function ActiveUsersList(props: Props) {
     }
 
     props.updateSingleUserChat(updatedChat);
-    props.updateSelectedUser(newSelectedUser);
+    props.updateSelectedChat(newSelectedChat);
   }
 
   const generateActiveUsers = () => {
@@ -136,23 +136,25 @@ export default function ActiveUsersList(props: Props) {
         <Grid item xs={12}>
           <List component='div' className={classes.root}>
             {
-              props.activeUsers
-                .filter(user => user.userId !== currentUser.userId)
-                .map(user => (
+              currentUserChats
+                .filter(chat => chat.type === "single")
+                .map(chat => {
+                  const otherUser = chat.users.filter(u => u.userId !== currentUser.userId)[0]
+                  return (
                   <ListItem key={uuidv4()}>
                     <Paper style={{width: '100%'}}>
                       <Box 
                         p={2} 
                         m={1} 
                         fontSize='h6.fontSize' 
-                        fontWeight={hasUnseenMessagesFromCurrentChat(user) ? "fontWeightBold" : "fontWeightRegular"}
-                        onClick={() => handleOnClick(user)}
+                        fontWeight={hasUnseenMessagesFromCurrentChat(chat) ? "fontWeightBold" : "fontWeightRegular"}
+                        onClick={() => handleOnClick(chat)}
                       >
-                        {user.username}
+                        {otherUser.username}
                       </Box>
                     </Paper>
                   </ListItem>
-                  )
+                  )}
                 )
             }
           </List>

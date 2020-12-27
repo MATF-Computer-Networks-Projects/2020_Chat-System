@@ -35,12 +35,12 @@ export default function Home () {
     [dispatch]
   )
 
-  const [selectedUser, setSelectedUser] = useState<ActiveUser>();
+  const [selectedChat, setSelectedChat] = useState<Chat>();
   const [activeUsers, setActiveUsers] = useState<ActiveUser[]>();
 
 
-  const updateSelectedUser = (newSelectedUser: ActiveUser) => {
-    setSelectedUser(newSelectedUser);
+  const updateSelectedChat = (newSelectedChat: Chat) => {
+    setSelectedChat(newSelectedChat);
   }
 
   const updateActiveUsers = (newActiveUsers: ActiveUser[]) => {
@@ -77,8 +77,8 @@ export default function Home () {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <ActiveUsersList 
-                  updateSelectedUser={updateSelectedUser} 
-                  selectedUser={selectedUser}
+                  updateSelectedChat={updateSelectedChat} 
+                  selectedChat={selectedChat}
                 
                   activeUsers={activeUsers}
                   updateActiveUsers={updateActiveUsers}
@@ -98,7 +98,7 @@ export default function Home () {
           </Grid>
           <Grid item xs={6} >
             <ChatTextbox  
-              selectedUser={selectedUser} 
+              selectedChat={selectedChat} 
               updateSingleUserChat={updateSingleUserChat}
             />
           </Grid>

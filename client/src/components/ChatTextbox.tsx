@@ -18,7 +18,7 @@ import {
 import * as chat from '../utils/chat';
 
 interface Props {
-  selectedUser: ActiveUser | undefined
+  selectedChat: Chat | undefined
   updateSingleUserChat: Function
 }
 
@@ -80,13 +80,15 @@ export default function ChatTextbox(props: Props) {
       return;
     }
 
-    if(!props.selectedUser) {
+    if(!props.selectedChat) {
       return
     }
 
+    const receivers = props.selectedChat.users.filter(u => u.userId != currentUser.userId)
+
     const newMessage: SingleMessage = {
       sender: currentUser,
-      receivers: [props.selectedUser],
+      receivers,
       message,
       timestampUTC: Date.now(),
       seen: false,
@@ -125,11 +127,11 @@ export default function ChatTextbox(props: Props) {
 
   const generateMessageBox = () => {    
     
-    if (!props.selectedUser) {
+    if (!props.selectedChat) {
       return;
     }
 
-    const currentChat = chat.findChatByUsers(currentUserChats, [currentUser, props.selectedUser]);
+    const currentChat = chat.findChatByUsers(currentUserChats, props.selectedChat.users);
     
     if (!currentChat) {
       return;
@@ -162,12 +164,12 @@ export default function ChatTextbox(props: Props) {
   const generateUserNotSelectedMessage = () => {
     return (
       <div>
-        Please select the user to start chatting
+        Please select chat to start chatting.
       </div>
     )
   }
 
-  if(!props.selectedUser) {
+  if(!props.selectedChat) {
     return (
       <div>
         {generateUserNotSelectedMessage()}
@@ -175,7 +177,7 @@ export default function ChatTextbox(props: Props) {
     )
   }
 
-  const displayText = props.selectedUser ? `Chatting with: ${props.selectedUser.username }` : 'Select user to start chatting';
+  const displayText = props.selectedChat ? `Chatting with: ${"REPLACE WITH SOMETHING MEANINGFUL" }` : 'Select user to start chatting';
 
   return (
     <div>
