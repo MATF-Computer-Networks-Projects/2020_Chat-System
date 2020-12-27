@@ -50,21 +50,17 @@ export default function GroupChatsList(props: Props) {
     }
     
     socket.on(socketEvents.RECEIVE_GROUP_CHAT + currentUser.userId , (newGroupChat: Chat) => {
-      console.log('RECEIVE_GROUP_CHAT')
       props.updateCurrentUserChats(newGroupChat);
     })
   }, [socket]);
   
   
   const handleCheckboxClick = (selectedUser: ActiveUser) => {
-    let updatedUsers = usersForNewChat
     if (!usersForNewChat.map(u => u.userId).includes(selectedUser.userId)) {
-      updatedUsers.push(selectedUser)
-      setUsersForNewChat(updatedUsers)
+      setUsersForNewChat([...usersForNewChat, selectedUser])
     } else {
-      setUsersForNewChat(updatedUsers.filter(user => user.userId !== selectedUser.userId));
+      setUsersForNewChat(usersForNewChat.filter(user => user.userId !== selectedUser.userId));
     }
-
   }
 
   const handleConfirm = () => {
@@ -72,7 +68,6 @@ export default function GroupChatsList(props: Props) {
       return;
     }
 
-    console.log('usersForNewChat: ', usersForNewChat);
     const newGroupChat: Chat = {
       users: usersForNewChat,
       messages: [],
