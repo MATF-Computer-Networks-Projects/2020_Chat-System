@@ -79,20 +79,15 @@ export default function ActiveUsersList(props: Props) {
   }, [socket]);
   
   const hasUnseenMessagesFromCurrentChat = (user: ActiveUser) => {
-
-    console.log('hasUnseenMessagesFromCurrentChat: ', user);
-
     const targetChat = chat.findChatByUsers(currentUserChats, [user, currentUser])
     if (!targetChat) {
       return false 
     }
-    console.log('dosao 3');
-
 
     if (targetChat.messages.find(msg => msg.sender.userId === user.userId && msg.seen === false)) {
       return true;
     }
-    console.log('kurcina');
+
     return false;
   }
 

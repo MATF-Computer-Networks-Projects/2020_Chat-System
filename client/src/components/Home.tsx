@@ -24,11 +24,6 @@ export default function Home () {
     (state: UserState) => state.currentUser,
     shallowEqual
   );
-
-  const currentUserChats = useSelector(
-    (state: UserState) => state.currentUserChats,
-    shallowEqual
-  );
   
   const addNewChatCallback = React.useCallback(
     (newChat: Chat) => dispatch(addNewChat(newChat)),
@@ -42,7 +37,6 @@ export default function Home () {
 
   const [selectedUser, setSelectedUser] = useState<ActiveUser>();
   const [activeUsers, setActiveUsers] = useState<ActiveUser[]>();
-  const [activeGroupChats, setActiveGroupChats] = useState<Array<ActiveUser[]>>([]);
 
 
   const updateSelectedUser = (newSelectedUser: ActiveUser) => {
@@ -51,10 +45,6 @@ export default function Home () {
 
   const updateActiveUsers = (newActiveUsers: ActiveUser[]) => {
     setActiveUsers(newActiveUsers);
-  }
-
-  const updateActiveGroupChats = (newGroupChat: ActiveUser[]) => {
-    setActiveGroupChats([...activeGroupChats, newGroupChat]);
   }
 
   const updateCurrentUserChats = (newChat: Chat) => {
@@ -101,8 +91,7 @@ export default function Home () {
               <Grid item xs={12}>
                 <GroupChatsList
                   activeUsers={activeUsers}
-                  activeGroupChats={activeGroupChats}
-                  updateActiveGroupChats={updateActiveGroupChats}
+                  updateCurrentUserChats={updateCurrentUserChats}
                 />
               </Grid>
             </Grid>

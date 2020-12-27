@@ -14,6 +14,7 @@ import {
   ActiveUser,
   socketEvents,
   UserState,
+  Chat,
 } from '../types';
 import { shallowEqual, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
@@ -22,8 +23,7 @@ import { useSocket } from '../contexts/SocketProvider';
 
 interface Props {
   activeUsers: ActiveUser[] | undefined
-  activeGroupChats: Array<ActiveUser[]>
-  updateActiveGroupChats: Function
+  updateCurrentUserChats: Function
 }
 
 export default function GroupChatsList(props: Props) {
@@ -34,8 +34,18 @@ export default function GroupChatsList(props: Props) {
     shallowEqual
   );
 
+  const currentUserChats = useSelector(
+    (state: UserState) => state.currentUserChats,
+    shallowEqual
+  );
 
-  const [groupChat, setGroupChat] = useState<ActiveUser[]>([currentUser]);
+  const emptyGroupChat: Chat = {
+    users: [currentUser],
+    messages: [],
+    type: "group"
+  }
+
+  const [groupChat, setGroupChat] = useState<Chat>(emptyGroupChat);
   const [createNewGroupClicked, setCreateNewGroupClicked] = useState(false);
 
   useEffect(() => {
@@ -44,33 +54,45 @@ export default function GroupChatsList(props: Props) {
       return;
     }
     
-    socket.on(socketEvents.RECEIVE_GROUP_CHAT, (groupChat: ActiveUser[]) => {
-      props.updateActiveGroupChats(groupChat);
+    socket.on(socketEvents.RECEIVE_GROUP_CHAT + currentUser.userId , (groupChat: Chat) => {
+      console.log('RECEIVE_GROUP_CHAT')
+      props.updateCurrentUserChats(groupChat);
     })
   }, [socket]);
   
   
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('handleCheckBoxChange is checked', e.target.checked);
     const selectedUser: ActiveUser = {
       userId: e.target.id,
       username: e.target.name
     }
+
+
     if(e.target.checked) {
-      setGroupChat([...groupChat, selectedUser])
+      setGroupChat({
+        ...groupChat, 
+        users: [...groupChat.users, selectedUser]})
     } else {
-      const filteredOutGroupChat = groupChat.filter(user => user.userId !== selectedUser.userId)
-      setGroupChat(filteredOutGroupChat);
+      const filteredOutUsers = groupChat.users.filter(user => user.userId !== selectedUser.userId)
+      setGroupChat({
+        ...groupChat,
+        users: filteredOutUsers
+      });
     }
+
+    console.log('groupChat: ', groupChat)
   }
 
   const handleConfirm = () => {
-    if (groupChat.length === 1 && groupChat[0] === currentUser) {
+    if (groupChat.users.length === 1 ) {
       return;
     }
 
     socket.emit(socketEvents.SEND_GROUP_CHAT, groupChat)
-    props.updateActiveGroupChats(groupChat)
-    setGroupChat([currentUser]);
+    props.updateCurrentUserChats(groupChat)
+    
+    setGroupChat(emptyGroupChat);
     setCreateNewGroupClicked(false)
   }
 
@@ -78,9 +100,10 @@ export default function GroupChatsList(props: Props) {
     return (
       <List component='div'>
         {
-          props.activeGroupChats
+          currentUserChats
+            .filter(chat => chat.type == "group")
             .map(groupChat => (
-              <ListItem id={uuidv4()}>
+              <ListItem key={uuidv4()}>
                 <Paper style={{width: '100%'}}>
                   <Box 
                     p={2} 
@@ -91,7 +114,7 @@ export default function GroupChatsList(props: Props) {
                     // onClick={() => handleOnClick(user)}
                   >
                     {
-                      groupChat
+                      groupChat.users
                       .map(user => {
                         if(user.userId === currentUser.userId) {
                           return 'You'
@@ -121,7 +144,7 @@ export default function GroupChatsList(props: Props) {
             props.activeUsers
             .filter(user => user.userId !== currentUser.userId)
             .map(user => (
-              <ListItem id={uuidv4()}>
+              <ListItem key={uuidv4()}>
                 <FormControlLabel
                   control={
                     <Checkbox 
