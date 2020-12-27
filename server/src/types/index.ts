@@ -30,6 +30,12 @@ export interface SingleMessage {
   seen: boolean,
 }
 
+export interface Chat {
+  users: ActiveUser[],
+  messages: SingleMessage[],
+  type: 'single' | 'group'
+}
+
 export interface SendActiveUsersMessage {
   socketId: string
 }

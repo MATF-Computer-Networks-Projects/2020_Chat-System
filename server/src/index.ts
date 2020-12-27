@@ -6,6 +6,7 @@ import {
   SendActiveUsersMessage,
   ActiveUser,
   SingleMessage,
+  Chat,
 } from './types';
 
 const app = express();
@@ -90,8 +91,11 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
 
   })
 
-  socket.on(socketEvents.SEND_GROUP_CHAT, (groupChat) => {
-    socket.broadcast.emit(socketEvents.RECEIVE_GROUP_CHAT, groupChat);
+  socket.on(socketEvents.SEND_GROUP_CHAT, (groupChat: Chat) => {
+    console.log('SEND_GROUP_CHAT: ', groupChat)
+    groupChat.users.forEach(user => {
+      socket.broadcast.emit(socketEvents.RECEIVE_GROUP_CHAT + user.userId, groupChat);
+    })
   })
 
 });
