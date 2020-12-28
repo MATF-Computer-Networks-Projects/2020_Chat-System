@@ -89,25 +89,6 @@ export default function GroupChatsList(props: Props) {
     setCreateNewGroupClicked(false)
   }
 
-  const handleOnClick = (newSelectedChat: Chat) => {
-    const targetChat = chatUtils.findChatByUsers(currentUserChats, newSelectedChat.users)
-    if (!targetChat) {
-      return
-    }
-
-    const updatedChatMessages = targetChat.messages.map(msg => {
-      return {...msg, seen: true}
-    });
-
-    const updatedChat = {
-      ...targetChat,
-      messages: updatedChatMessages
-    }
-
-    props.updateSingleUserChat(updatedChat);
-    props.updateSelectedChat(newSelectedChat);
-  }
-
   const generateActiveGroupChats = () => {
     return (
       <List component='div'>
@@ -122,7 +103,7 @@ export default function GroupChatsList(props: Props) {
                     m={1} 
                     fontSize='h6.fontSize' 
                     fontWeight={userUtils.hasUnseenMessagesFromCurrentChat(chat, currentUserChats, currentUser) ? "fontWeightBold" : "fontWeightRegular"}
-                    onClick={() => handleOnClick(chat)}
+                    onClick={() => userUtils.handleChatClick(chat, currentUserChats, props.updateSingleUserChat, props.updateSelectedChat)}
                   >
                     { chatUtils.createPrettyGroupChatName(chat, currentUser) }
                   </Box>

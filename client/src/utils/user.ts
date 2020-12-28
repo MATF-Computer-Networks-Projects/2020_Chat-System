@@ -17,3 +17,23 @@ export const hasUnseenMessagesFromCurrentChat = (currentChat: Chat, currentUserC
 
   return false;
 }
+
+export const handleChatClick = (newSelectedChat: Chat, currentUserChats: Chat[], 
+  updateSingleUserChat: Function, updateSelectedChat: Function) => {
+  const targetChat = chatUtils.findChatByUsers(currentUserChats, newSelectedChat.users)
+  if (!targetChat) {
+    return
+  }
+
+  const updatedChatMessages = targetChat.messages.map(msg => {
+    return {...msg, seen: true}
+  });
+
+  const updatedChat = {
+    ...targetChat,
+    messages: updatedChatMessages
+  }
+
+  updateSingleUserChat(updatedChat);
+  updateSelectedChat(newSelectedChat);
+}

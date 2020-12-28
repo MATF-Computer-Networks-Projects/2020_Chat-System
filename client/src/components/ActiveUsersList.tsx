@@ -3,7 +3,6 @@ import {
   ActiveUser,
   ReceiveActiveUsersMessage,
   socketEvents,
-  SingleMessage,
   Chat,
   UserState,
 } from '../types';
@@ -16,7 +15,6 @@ import Grid from '@material-ui/core/Grid';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { v4 as uuidv4 } from 'uuid';
 import { shallowEqual, useSelector } from 'react-redux';
-import * as chat from '../utils/chat';
 import * as userUtils from '../utils/user';
 interface Props {
   updateSelectedChat: Function
@@ -79,25 +77,6 @@ export default function ActiveUsersList(props: Props) {
     })
   }, [socket]);
 
-  const handleOnClick = (newSelectedChat: Chat) => {
-    const targetChat = chat.findChatByUsers(currentUserChats, newSelectedChat.users)
-    if (!targetChat) {
-      return
-    }
-
-    const updatedChatMessages = targetChat.messages.map(msg => {
-      return {...msg, seen: true}
-    });
-
-    const updatedChat = {
-      ...targetChat,
-      messages: updatedChatMessages
-    }
-
-    props.updateSingleUserChat(updatedChat);
-    props.updateSelectedChat(newSelectedChat);
-  }
-
   const generateActiveUsers = () => {
 
     if(!socket) {
@@ -136,7 +115,7 @@ export default function ActiveUsersList(props: Props) {
                         m={1} 
                         fontSize='h6.fontSize' 
                         fontWeight={userUtils.hasUnseenMessagesFromCurrentChat(chat, currentUserChats, currentUser) ? "fontWeightBold" : "fontWeightRegular"}
-                        onClick={() => handleOnClick(chat)}
+                        onClick={() => userUtils.handleChatClick(chat, currentUserChats, props.updateSingleUserChat, props.updateSelectedChat)}
                       >
                         {otherUser.username}
                       </Box>

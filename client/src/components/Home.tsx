@@ -52,7 +52,6 @@ export default function Home () {
   }
 
   const updateSingleUserChat = (updatedChat: Chat) => {
-    console.log('updateSingleUserChat: ', updatedChat)
     updateSingleChatCallback(updatedChat);
   }
 
