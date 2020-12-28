@@ -21,6 +21,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
 import { useSocket } from '../contexts/SocketProvider';
 import * as chatUtils from '../utils/chat';
+import * as userUtils from '../utils/user';
 
 interface Props {
   updateSelectedChat: Function
@@ -107,19 +108,6 @@ export default function GroupChatsList(props: Props) {
     props.updateSelectedChat(newSelectedChat);
   }
 
-  const hasUnseenMessagesFromCurrentChat = (currentChat: Chat) => {
-    const targetChat = chatUtils.findChatByUsers(currentUserChats, currentChat.users)
-    if (!targetChat) {
-      return false 
-    }
-
-    if (targetChat.messages.find(msg => msg.sender.userId !== currentUser.userId && msg.seen === false)) {
-      return true;
-    }
-
-    return false;
-  }
-
   const generateActiveGroupChats = () => {
     return (
       <List component='div'>
@@ -133,7 +121,7 @@ export default function GroupChatsList(props: Props) {
                     p={2} 
                     m={1} 
                     fontSize='h6.fontSize' 
-                    fontWeight={hasUnseenMessagesFromCurrentChat(chat) ? "fontWeightBold" : "fontWeightRegular"}
+                    fontWeight={userUtils.hasUnseenMessagesFromCurrentChat(chat, currentUserChats, currentUser) ? "fontWeightBold" : "fontWeightRegular"}
                     onClick={() => handleOnClick(chat)}
                   >
                     { chatUtils.createPrettyGroupChatName(chat, currentUser) }

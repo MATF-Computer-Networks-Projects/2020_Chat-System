@@ -17,6 +17,7 @@ import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { v4 as uuidv4 } from 'uuid';
 import { shallowEqual, useSelector } from 'react-redux';
 import * as chat from '../utils/chat';
+import * as userUtils from '../utils/user';
 interface Props {
   updateSelectedChat: Function
   selectedChat: Chat | undefined
@@ -77,19 +78,6 @@ export default function ActiveUsersList(props: Props) {
       createNewEmptyChatsIfNeeded(msg.activeUsers);
     })
   }, [socket]);
-  
-  const hasUnseenMessagesFromCurrentChat = (currentChat: Chat) => {
-    const targetChat = chat.findChatByUsers(currentUserChats, currentChat.users)
-    if (!targetChat) {
-      return false 
-    }
-
-    if (targetChat.messages.find(msg => msg.sender.userId !== currentUser.userId && msg.seen === false)) {
-      return true;
-    }
-
-    return false;
-  }
 
   const handleOnClick = (newSelectedChat: Chat) => {
     const targetChat = chat.findChatByUsers(currentUserChats, newSelectedChat.users)
@@ -147,7 +135,7 @@ export default function ActiveUsersList(props: Props) {
                         p={2} 
                         m={1} 
                         fontSize='h6.fontSize' 
-                        fontWeight={hasUnseenMessagesFromCurrentChat(chat) ? "fontWeightBold" : "fontWeightRegular"}
+                        fontWeight={userUtils.hasUnseenMessagesFromCurrentChat(chat, currentUserChats, currentUser) ? "fontWeightBold" : "fontWeightRegular"}
                         onClick={() => handleOnClick(chat)}
                       >
                         {otherUser.username}
