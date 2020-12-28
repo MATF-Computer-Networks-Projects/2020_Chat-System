@@ -160,18 +160,10 @@ export default function ChatTextbox(props: Props) {
     )
   }
 
-  const generateUserNotSelectedMessage = () => {
-    return (
-      <div>
-        Please select chat to start chatting.
-      </div>
-    )
-  }
-
   if(!props.selectedChat) {
     return (
       <div>
-        {generateUserNotSelectedMessage()}
+        Please select chat to start chatting.
       </div>
     )
   }
