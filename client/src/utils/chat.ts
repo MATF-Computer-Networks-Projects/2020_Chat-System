@@ -56,7 +56,7 @@ export const createPrettyChattingWithMessage = (chat: Chat, currentUser: ActiveU
   }
 
   if (filteredUsers.length <= numOfUsersToInclude) {
-    return filteredUsers.reduce((acc, user) => acc + ', ' + user.username, '')
+    return filteredUsers.reduce((acc, user) => acc + ', ' + user.username, '').slice(2)
   }
 
   const includedUsers = filteredUsers.slice(0, numOfUsersToInclude)
