@@ -45,3 +45,27 @@ export const findChatByUsers = (currentUserChats: Chat[], users: ActiveUser[]): 
   })
   return toReturn;
 }
+
+export const createPrettyChattingWithMessage = (chat: Chat, currentUser: ActiveUser): string => {
+  const numOfUsersToInclude = 2
+  
+  const filteredUsers = chat.users.filter(u => u.userId !== currentUser.userId);
+
+  if (filteredUsers.length === 1) {
+    return filteredUsers[0].username
+  }
+
+  if (filteredUsers.length <= numOfUsersToInclude) {
+    return filteredUsers.reduce((acc, user) => acc + ', ' + user.username, '')
+  }
+
+  const includedUsers = filteredUsers.slice(0, numOfUsersToInclude)
+  const numOfExcludedUsers = filteredUsers.length - includedUsers.length
+
+  const endString = numOfExcludedUsers === 1 ? ` and ${numOfExcludedUsers} more user` : ` and ${numOfExcludedUsers} more users`
+  return includedUsers.reduce((acc, user) => acc + ', ' + user.username, '').slice(2) + endString
+}
+
+export const createPrettyGroupChatName = (chat: Chat, currentUser: ActiveUser): string => {
+  return 'You, ' + createPrettyChattingWithMessage(chat, currentUser)
+}

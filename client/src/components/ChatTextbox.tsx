@@ -11,11 +11,10 @@ import { shallowEqual, useSelector } from 'react-redux';
 import { 
   socketEvents,
   SingleMessage,
-  ActiveUser,
   UserState,
   Chat,
 } from '../types';
-import * as chat from '../utils/chat';
+import * as chatUtils from '../utils/chat';
 
 interface Props {
   selectedChat: Chat | undefined
@@ -38,7 +37,7 @@ export default function ChatTextbox(props: Props) {
   const [message, setMessage] = useState('');
 
   const addNewMessageToChat = (newMessage: SingleMessage) => {
-    const chatForUpdate = chat.findChatByUsers(currentUserChats, [...newMessage.receivers, newMessage.sender])
+    const chatForUpdate = chatUtils.findChatByUsers(currentUserChats, [...newMessage.receivers, newMessage.sender])
     if(!chatForUpdate) {
       return
     }
@@ -84,7 +83,7 @@ export default function ChatTextbox(props: Props) {
       return
     }
 
-    const receivers = props.selectedChat.users.filter(u => u.userId != currentUser.userId)
+    const receivers = props.selectedChat.users.filter(u => u.userId !== currentUser.userId)
 
     const newMessage: SingleMessage = {
       sender: currentUser,
@@ -131,7 +130,7 @@ export default function ChatTextbox(props: Props) {
       return;
     }
 
-    const currentChat = chat.findChatByUsers(currentUserChats, props.selectedChat.users);
+    const currentChat = chatUtils.findChatByUsers(currentUserChats, props.selectedChat.users);
     
     if (!currentChat) {
       return;
@@ -177,7 +176,7 @@ export default function ChatTextbox(props: Props) {
     )
   }
 
-  const displayText = props.selectedChat ? `Chatting with: ${"REPLACE WITH SOMETHING MEANINGFUL" }` : 'Select user to start chatting';
+  const displayText = props.selectedChat ? `Chatting with: ${ chatUtils.createPrettyChattingWithMessage(props.selectedChat, currentUser) }` : 'Select user to start chatting';
 
   return (
     <div>

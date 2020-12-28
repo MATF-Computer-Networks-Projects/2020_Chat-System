@@ -20,7 +20,7 @@ import { shallowEqual, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
 import { useSocket } from '../contexts/SocketProvider';
-import * as chat from '../utils/chat';
+import * as chatUtils from '../utils/chat';
 
 interface Props {
   updateSelectedChat: Function
@@ -89,7 +89,7 @@ export default function GroupChatsList(props: Props) {
   }
 
   const handleOnClick = (newSelectedChat: Chat) => {
-    const targetChat = chat.findChatByUsers(currentUserChats, newSelectedChat.users)
+    const targetChat = chatUtils.findChatByUsers(currentUserChats, newSelectedChat.users)
     if (!targetChat) {
       return
     }
@@ -108,7 +108,7 @@ export default function GroupChatsList(props: Props) {
   }
 
   const hasUnseenMessagesFromCurrentChat = (currentChat: Chat) => {
-    const targetChat = chat.findChatByUsers(currentUserChats, currentChat.users)
+    const targetChat = chatUtils.findChatByUsers(currentUserChats, currentChat.users)
     if (!targetChat) {
       return false 
     }
@@ -136,16 +136,7 @@ export default function GroupChatsList(props: Props) {
                     fontWeight={hasUnseenMessagesFromCurrentChat(chat) ? "fontWeightBold" : "fontWeightRegular"}
                     onClick={() => handleOnClick(chat)}
                   >
-                    {
-                      chat.users
-                      .map(user => {
-                        if(user.userId === currentUser.userId) {
-                          return 'You'
-                        }
-                        return user.username
-                      })
-                      .reduce((acc, username) => acc + ', ' + username)
-                    }
+                    { chatUtils.createPrettyGroupChatName(chat, currentUser) }
                   </Box>
                 </Paper>
               </ListItem>
