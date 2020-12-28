@@ -146,10 +146,11 @@ export default function ChatTextbox(props: Props) {
           {
             sortedMessages.map(message => {
               const alignment = JSON.stringify(message.sender) === JSON.stringify(currentUser) ? "right" : "left";
+              const sender = (alignment === "right" ?  'You' : message.sender.username)
               return (
                 <Grid item xs={12} key={uuidv4()}>
                   <Box p={2} textAlign={alignment}>
-                    {message.message}
+                    <span><b>{sender + ': '}</b>  {message.message}</span>
                   </Box>
                 </Grid>
               )
