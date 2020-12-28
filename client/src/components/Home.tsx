@@ -8,12 +8,9 @@ import ChatTextbox from './ChatTextbox';
 import Grid from '@material-ui/core/Grid';
 import { 
   ActiveUser,
-  SingleMessage,
   Chat,
   UserState
 } from '../types';
-import * as chat from '../utils/chat';
-
 
 
 export default function Home () {  
