@@ -42,10 +42,8 @@ export default function ChatTextbox(props: Props) {
 
   const addNewMessageToChat = (newMessage: SingleMessage) => {
     if (newMessage.type !== 'text') {
-      console.log('Stagod: ', newMessage.message as ArrayBuffer)
-      // console.log('Int16Array binary message: ', new Int16Array(newMessage.message as ArrayBuffer))
-      // console.log('Int32Array binary message: ', new Int32Array(newMessage.message as ArrayBuffer))
       setImgString(newMessage.message as string)
+      
 
       return
     }
@@ -69,6 +67,7 @@ export default function ChatTextbox(props: Props) {
     }
 
     socket.on(socketEvents.RECEIVE_MESSAGE + currentUser.userId, (data: SingleMessage) => {
+      console.log('RECEIVE_MESSAGE: ', data)
       const newMessage: SingleMessage = {
         sender: data.sender,
         receivers: data.receivers,
@@ -125,8 +124,8 @@ export default function ChatTextbox(props: Props) {
       }
   
         addNewMessageToChat(newMessage)
+        console.log('emittiong')
         socket.emit(socketEvents.SEND_MESSAGE, newMessage)
-        setMessage('');
     })
   }
 
@@ -231,6 +230,7 @@ export default function ChatTextbox(props: Props) {
   }
 
   const generateImgComponent = () => {
+    console.log('generateImgComponent: ', imgString)
     if (imgString === '') {
       return;
     }
