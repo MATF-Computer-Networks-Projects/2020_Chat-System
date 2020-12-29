@@ -35,6 +35,8 @@ export default function ChatTextbox(props: Props) {
 
 
   const [message, setMessage] = useState('');
+  const [file, setFile] = useState<BlobPart>();
+  const [fileSelected, setFileSelected] = useState(false);
 
   const addNewMessageToChat = (newMessage: SingleMessage) => {
     const chatForUpdate = chatUtils.findChatByUsers(currentUserChats, [...newMessage.receivers, newMessage.sender])
@@ -98,11 +100,17 @@ export default function ChatTextbox(props: Props) {
     setMessage('');
   }
 
-  const generateInputFieldAndButton = () => {
+  const handleFileInput = (e: { target: { files: any; }; }) => {
+    console.log('file selected: ', e.target.files)
+    setFile(e.target.files[0])
+    setFileSelected(true)
+  }
+
+  const generateInputFieldAndButtons = () => {
     return (
       <form onSubmit={handleSend}>
       <Grid container spacing={3}>
-        <Grid item xs={10} >
+        <Grid item xs={8} >
           <TextField
             id='message-input-field'
             placeholder='Type your message here'
@@ -118,6 +126,9 @@ export default function ChatTextbox(props: Props) {
           >
             Send
           </Button>
+        </Grid>
+        <Grid item xs={2} >
+          <input type='file' onChange={handleFileInput}/>
         </Grid>
       </Grid>
       </form>
@@ -161,6 +172,34 @@ export default function ChatTextbox(props: Props) {
     )
   }
 
+
+  const generateDownloadButton = () => {
+    console.log('fileSelected: ', fileSelected)
+    console.log('file: ', file)
+    
+    if (!fileSelected) {
+      return
+    }
+
+    if (!file) {
+      return
+    }
+
+    const blob = new Blob([file])
+    const fileDownloadUrl = URL.createObjectURL(blob)
+
+    const fileName = uuidv4()
+    return (
+      <a
+        href={fileDownloadUrl}
+        download={fileName}
+      > 
+        {fileName} 
+      </a>
+    )
+
+  }
+
   if(!props.selectedChat) {
     return (
       <div>
@@ -180,7 +219,10 @@ export default function ChatTextbox(props: Props) {
         {generateMessageBox()}
       </Box>
       <Box>
-        {generateInputFieldAndButton()}
+        {generateInputFieldAndButtons()}
+      </Box>
+      <Box>
+        {generateDownloadButton()}
       </Box>
     </div>
   )
