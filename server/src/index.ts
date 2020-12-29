@@ -71,6 +71,7 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
         message: msg.message,
         timestampUTC: msg.timestampUTC,
         seen: msg.seen,
+        type: msg.type,
       }
       console.log('RECEIVE_MESSAGE: ', socketEvents.RECEIVE_MESSAGE + receiver.userId)
       socket.broadcast.emit(socketEvents.RECEIVE_MESSAGE + receiver.userId, newMessage)
