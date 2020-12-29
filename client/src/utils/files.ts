@@ -1,12 +1,7 @@
-export const determineFileType = (file: File): 'text' | 'image' => {
-  if (file.name.includes('text')) {
-    return 'text'
+export const determineFileType = (file: File): 'file' | 'image' => {
+  if (file.type.includes('text')) {
+    return 'file'
   }
 
   return 'image';
-
-  //! FIXME
-  // if (file.name.includes('image')) {
-  //   return 'image'
-  // }
 }

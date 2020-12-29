@@ -38,20 +38,8 @@ export default function ChatTextbox(props: Props) {
   const [message, setMessage] = useState('');
   const [currentFile, setCurrentFile] = useState<File>();
   const [fileSelected, setFileSelected] = useState(false);
-  const [imgString, setImgString] = useState('');
 
   const addNewMessageToChat = (newMessage: SingleMessage) => {
-    if (newMessage.type !== 'text') {
-      setImgString(newMessage.message as string)
-
-      
-      const text = Buffer.from(newMessage.message as string, 'base64').toString('utf-8')
-      console.log('received text: ', text)
-    
-      
-
-      return
-    }
     const chatForUpdate = chatUtils.findChatByUsers(currentUserChats, [...newMessage.receivers, newMessage.sender])
     if(!chatForUpdate) {
       return
@@ -72,7 +60,6 @@ export default function ChatTextbox(props: Props) {
     }
 
     socket.on(socketEvents.RECEIVE_MESSAGE + currentUser.userId, (data: SingleMessage) => {
-      console.log('RECEIVE_MESSAGE: ', data)
       const newMessage: SingleMessage = {
         sender: data.sender,
         receivers: data.receivers,
@@ -129,13 +116,11 @@ export default function ChatTextbox(props: Props) {
       }
   
         addNewMessageToChat(newMessage)
-        console.log('emittiong')
         socket.emit(socketEvents.SEND_MESSAGE, newMessage)
     })
   }
 
   const handleFileInput = (e: { target: { files: any; }; }) => {
-    console.log('file selected: ', e.target.files)
     setCurrentFile(e.target.files[0])
     setFileSelected(true)
   }
@@ -169,15 +154,41 @@ export default function ChatTextbox(props: Props) {
     )  
   }
 
+  
+  const generateDownloadDialog = (file: File) => {
+    
+    const fileDownloadUrl = URL.createObjectURL(file)
+
+    return (
+      <a
+        href={fileDownloadUrl}
+        download
+      > 
+        {uuidv4()} 
+      </a>
+    )
+  }
+
+  const generateImgComponent = (message: SingleMessage) => {
+    const imgString = message.message
+    
+    return (
+      <img alt='missing data' src={`data:image/png;base64, ${imgString}`} width='30%' height='30%'/>
+    )
+  }
 
   const formatMessage = (message: SingleMessage) => {
-    //if (message.type === 'text') {
-      return message.message
-    // }
-
-    // return (
-    //   generateDownloadDialog(message.message as File)
-    // )
+    switch(message.type) {
+      case 'file':
+        const file = new File([message.message], uuidv4(), {type: 'text/plain'})
+        return generateDownloadDialog(file)
+        
+      case 'image':
+        return generateImgComponent(message)
+      
+      default:
+        return message.message
+    }
   }
 
   const generateMessageBox = () => {    
@@ -216,36 +227,6 @@ export default function ChatTextbox(props: Props) {
       </Paper>
     )
   }
-
-
-  const generateDownloadDialog = (blob: Blob) => {
-    
-    console.log('blob: ', blob)
-    const fileDownloadUrl = URL.createObjectURL(blob)
-
-    return (
-      <a
-        href={fileDownloadUrl}
-        download
-      > 
-        {uuidv4()} 
-      </a>
-    )
-
-  }
-
-  const generateImgComponent = () => {
-    console.log('generateImgComponent: ', imgString)
-    if (imgString === '') {
-      return;
-    }
-    return (
-      <img src={`data:image/png;base64, ${imgString}` }/>
-    )
-    
-
-  }
-
   if(!props.selectedChat) {
     return (
       <div>
@@ -266,9 +247,6 @@ export default function ChatTextbox(props: Props) {
       </Box>
       <Box>
         {generateInputFieldAndButtons()}
-      </Box>
-      <Box>
-        {generateImgComponent()}
       </Box>
     </div>
   )
