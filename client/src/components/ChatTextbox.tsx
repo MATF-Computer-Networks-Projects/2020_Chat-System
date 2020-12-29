@@ -155,7 +155,9 @@ export default function ChatTextbox(props: Props) {
   }
 
   
-  const generateDownloadDialog = (file: File) => {
+  const generateDownloadDialog = (message: SingleMessage) => {
+    const text = Buffer.from(message.message as string, 'base64').toString('utf-8')
+    const file = new File([text], uuidv4(), {type: 'text/plain'})
     
     const fileDownloadUrl = URL.createObjectURL(file)
 
@@ -180,8 +182,7 @@ export default function ChatTextbox(props: Props) {
   const formatMessage = (message: SingleMessage) => {
     switch(message.type) {
       case 'file':
-        const file = new File([message.message], uuidv4(), {type: 'text/plain'})
-        return generateDownloadDialog(file)
+        return generateDownloadDialog(message)
         
       case 'image':
         return generateImgComponent(message)
