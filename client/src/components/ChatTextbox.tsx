@@ -15,6 +15,7 @@ import {
   Chat,
 } from '../types';
 import * as chatUtils from '../utils/chat';
+import * as fileUtils from '../utils/files';
 
 interface Props {
   selectedChat: Chat | undefined
@@ -35,10 +36,19 @@ export default function ChatTextbox(props: Props) {
 
 
   const [message, setMessage] = useState('');
-  const [file, setFile] = useState<BlobPart>();
+  const [currentFile, setCurrentFile] = useState<File>();
   const [fileSelected, setFileSelected] = useState(false);
+  const [imgString, setImgString] = useState('');
 
   const addNewMessageToChat = (newMessage: SingleMessage) => {
+    if (newMessage.type !== 'text') {
+      console.log('Stagod: ', newMessage.message as ArrayBuffer)
+      // console.log('Int16Array binary message: ', new Int16Array(newMessage.message as ArrayBuffer))
+      // console.log('Int32Array binary message: ', new Int32Array(newMessage.message as ArrayBuffer))
+      setImgString(newMessage.message as string)
+
+      return
+    }
     const chatForUpdate = chatUtils.findChatByUsers(currentUserChats, [...newMessage.receivers, newMessage.sender])
     if(!chatForUpdate) {
       return
@@ -65,6 +75,7 @@ export default function ChatTextbox(props: Props) {
         message: data.message,
         timestampUTC: data.timestampUTC,
         seen: data.seen,
+        type: data.type,
       }
       addNewMessageToChat(newMessage);
     })
@@ -77,7 +88,7 @@ export default function ChatTextbox(props: Props) {
   const handleSend = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     
-    if(message === '') {
+    if(message === '' && !fileSelected) {
       return;
     }
 
@@ -87,22 +98,41 @@ export default function ChatTextbox(props: Props) {
 
     const receivers = props.selectedChat.users.filter(u => u.userId !== currentUser.userId)
 
-    const newMessage: SingleMessage = {
-      sender: currentUser,
-      receivers,
-      message,
-      timestampUTC: Date.now(),
-      seen: false,
+
+    if(message !== '') {
+      const newMessage: SingleMessage = {
+        sender: currentUser,
+        receivers,
+        message,
+        timestampUTC: Date.now(),
+        seen: false,
+        type: 'text',
+      }
+
+      addNewMessageToChat(newMessage)
+      socket.emit(socketEvents.SEND_MESSAGE, newMessage)
+      setMessage('');
     }
 
-    addNewMessageToChat(newMessage)
-    socket.emit(socketEvents.SEND_MESSAGE, newMessage)
-    setMessage('');
+    currentFile?.arrayBuffer().then(buffer => {
+      const newMessage: SingleMessage = {
+        sender: currentUser,
+        receivers,
+        message: Buffer.from(buffer).toString('base64'),
+        timestampUTC: Date.now(),
+        seen: false,
+        type: fileUtils.determineFileType(currentFile as File),
+      }
+  
+        addNewMessageToChat(newMessage)
+        socket.emit(socketEvents.SEND_MESSAGE, newMessage)
+        setMessage('');
+    })
   }
 
   const handleFileInput = (e: { target: { files: any; }; }) => {
     console.log('file selected: ', e.target.files)
-    setFile(e.target.files[0])
+    setCurrentFile(e.target.files[0])
     setFileSelected(true)
   }
 
@@ -128,11 +158,22 @@ export default function ChatTextbox(props: Props) {
           </Button>
         </Grid>
         <Grid item xs={2} >
-          <input type='file' onChange={handleFileInput}/>
+          <input type='file' onChange={handleFileInput} accept='.txt, .jpg'/>
         </Grid>
       </Grid>
       </form>
     )  
+  }
+
+
+  const formatMessage = (message: SingleMessage) => {
+    //if (message.type === 'text') {
+      return message.message
+    // }
+
+    // return (
+    //   generateDownloadDialog(message.message as File)
+    // )
   }
 
   const generateMessageBox = () => {    
@@ -161,7 +202,7 @@ export default function ChatTextbox(props: Props) {
               return (
                 <Grid item xs={12} key={uuidv4()}>
                   <Box p={2} textAlign={alignment}>
-                    <span><b>{sender + ': '}</b>  {message.message}</span>
+                    <span><b>{sender + ': '}</b>  {formatMessage(message)}</span>
                   </Box>
                 </Grid>
               )
@@ -173,30 +214,30 @@ export default function ChatTextbox(props: Props) {
   }
 
 
-  const generateDownloadButton = () => {
-    console.log('fileSelected: ', fileSelected)
-    console.log('file: ', file)
+  const generateDownloadDialog = (blob: Blob) => {
     
-    if (!fileSelected) {
-      return
-    }
-
-    if (!file) {
-      return
-    }
-
-    const blob = new Blob([file])
+    console.log('blob: ', blob)
     const fileDownloadUrl = URL.createObjectURL(blob)
 
-    const fileName = uuidv4()
     return (
       <a
         href={fileDownloadUrl}
-        download={fileName}
+        download
       > 
-        {fileName} 
+        {uuidv4()} 
       </a>
     )
+
+  }
+
+  const generateImgComponent = () => {
+    if (imgString === '') {
+      return;
+    }
+    return (
+      <img src={`data:image/png;base64, ${imgString}` }/>
+    )
+    
 
   }
 
@@ -222,7 +263,7 @@ export default function ChatTextbox(props: Props) {
         {generateInputFieldAndButtons()}
       </Box>
       <Box>
-        {generateDownloadButton()}
+        {generateImgComponent()}
       </Box>
     </div>
   )
