@@ -43,6 +43,11 @@ export default function ChatTextbox(props: Props) {
   const addNewMessageToChat = (newMessage: SingleMessage) => {
     if (newMessage.type !== 'text') {
       setImgString(newMessage.message as string)
+
+      
+      const text = Buffer.from(newMessage.message as string, 'base64').toString('utf-8')
+      console.log('received text: ', text)
+    
       
 
       return

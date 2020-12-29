@@ -37,7 +37,7 @@ export interface ActiveUser {
 export interface SingleMessage {
   sender: ActiveUser, 
   receivers: ActiveUser[],
-  message: string | ArrayBuffer,
+  message: string,
   timestampUTC: number,
   seen: boolean,
   type: 'text' | 'file' | 'image'
