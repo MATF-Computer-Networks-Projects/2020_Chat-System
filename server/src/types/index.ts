@@ -29,6 +29,7 @@ export interface SingleMessage {
   timestampUTC: number,
   seen: boolean,
   type: 'text' | 'file' | 'image'
+  name: string,
 }
 
 export interface Chat {
