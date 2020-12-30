@@ -68,6 +68,7 @@ export default function ChatTextbox(props: Props) {
         timestampUTC: data.timestampUTC,
         seen: data.seen,
         type: data.type,
+        name: data.name
       }
       addNewMessageToChat(newMessage);
     })
@@ -99,6 +100,7 @@ export default function ChatTextbox(props: Props) {
         timestampUTC: Date.now(),
         seen: false,
         type: 'text',
+        name: 'text-message',
       }
 
       addNewMessageToChat(newMessage)
@@ -113,6 +115,7 @@ export default function ChatTextbox(props: Props) {
           timestampUTC: Date.now(),
           seen: false,
           type: fileUtils.determineFileType(selectedFile as File),
+          name: selectedFile.name,
         }
     
           addNewMessageToChat(newMessage)
@@ -205,7 +208,7 @@ export default function ChatTextbox(props: Props) {
         href={fileDownloadUrl}
         download
       > 
-        {uuidv4()} 
+        {message.name} 
       </a>
     )
   }
@@ -214,7 +217,7 @@ export default function ChatTextbox(props: Props) {
     const imgString = message.message
     
     return (
-      <img alt='missing data' src={`data:image/png;base64, ${imgString}`} width='30%' height='30%'/>
+      <img alt={message.name} src={`data:image/jpg;base64, ${imgString}`} width='30%' height='30%'/>
     )
   }
 

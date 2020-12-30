@@ -40,7 +40,8 @@ export interface SingleMessage {
   message: string,
   timestampUTC: number,
   seen: boolean,
-  type: 'text' | 'file' | 'image'
+  type: 'text' | 'file' | 'image',
+  name: string,
 }
 
 
