@@ -36,8 +36,9 @@ export default function ChatTextbox(props: Props) {
 
 
   const [message, setMessage] = useState('');
-  const [currentFile, setCurrentFile] = useState<File>();
-  const [fileSelected, setFileSelected] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File>();
+  // const [fileSelected, setFileSelected] = useState(false);
+  const [uploadClicked, setUploadClicked] = useState(false);
 
   const addNewMessageToChat = (newMessage: SingleMessage) => {
     const chatForUpdate = chatUtils.findChatByUsers(currentUserChats, [...newMessage.receivers, newMessage.sender])
@@ -79,7 +80,7 @@ export default function ChatTextbox(props: Props) {
   const handleSend = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     
-    if(message === '' && !fileSelected) {
+    if(message === '' && !selectedFile) {
       return;
     }
 
@@ -90,7 +91,7 @@ export default function ChatTextbox(props: Props) {
     const receivers = props.selectedChat.users.filter(u => u.userId !== currentUser.userId)
 
 
-    if(message !== '') {
+    if(!selectedFile) {
       const newMessage: SingleMessage = {
         sender: currentUser,
         receivers,
@@ -103,26 +104,63 @@ export default function ChatTextbox(props: Props) {
       addNewMessageToChat(newMessage)
       socket.emit(socketEvents.SEND_MESSAGE, newMessage)
       setMessage('');
-    }
-
-    currentFile?.arrayBuffer().then(buffer => {
-      const newMessage: SingleMessage = {
-        sender: currentUser,
-        receivers,
-        message: Buffer.from(buffer).toString('base64'),
-        timestampUTC: Date.now(),
-        seen: false,
-        type: fileUtils.determineFileType(currentFile as File),
-      }
-  
-        addNewMessageToChat(newMessage)
-        socket.emit(socketEvents.SEND_MESSAGE, newMessage)
-    })
+    } else {
+      selectedFile?.arrayBuffer().then(buffer => {
+        const newMessage: SingleMessage = {
+          sender: currentUser,
+          receivers,
+          message: Buffer.from(buffer).toString('base64'),
+          timestampUTC: Date.now(),
+          seen: false,
+          type: fileUtils.determineFileType(selectedFile as File),
+        }
+    
+          addNewMessageToChat(newMessage)
+          socket.emit(socketEvents.SEND_MESSAGE, newMessage)
+          setSelectedFile(undefined)
+          setUploadClicked(false)
+      })
+    }    
   }
 
   const handleFileInput = (e: { target: { files: any; }; }) => {
-    setCurrentFile(e.target.files[0])
-    setFileSelected(true)
+    setSelectedFile(e.target.files[0])
+  }
+
+  const generateFileUploadComponents = () => {
+    if (!uploadClicked) {
+      return (
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Button
+              fullWidth
+              onClick={() => setUploadClicked(true)}
+            >
+              Upload
+          </Button>
+          </Grid>
+        </Grid>
+      )
+    }
+    
+    return (
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <input type='file' onChange={handleFileInput} accept='.txt, .jpg'/>
+        </Grid>
+        <Grid item xs={12}>
+        <Button
+            fullWidth
+            onClick={() => {
+              setUploadClicked(false)
+              setSelectedFile(undefined)
+            }}
+          >
+            Cancel
+          </Button>
+        </Grid>
+      </Grid>
+    )
   }
 
   const generateInputFieldAndButtons = () => {
@@ -132,7 +170,8 @@ export default function ChatTextbox(props: Props) {
         <Grid item xs={8} >
           <TextField
             id='message-input-field'
-            placeholder='Type your message here'
+            placeholder={!selectedFile ? 'Type your message here' : 'Please send file first'}
+            disabled={!selectedFile ? false : true}
             value={message}
             onChange={handleInputChange}
             fullWidth
@@ -147,7 +186,7 @@ export default function ChatTextbox(props: Props) {
           </Button>
         </Grid>
         <Grid item xs={2} >
-          <input type='file' onChange={handleFileInput} accept='.txt, .jpg'/>
+          {generateFileUploadComponents()}
         </Grid>
       </Grid>
       </form>
