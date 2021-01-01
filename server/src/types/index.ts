@@ -15,6 +15,8 @@ export const socketEvents = {
 
   SEND_GROUP_CHAT: 'sendGroupChat',
   RECEIVE_GROUP_CHAT: 'receiveGroupChat',
+
+  RECEIVE_DISCONNECTED_USER: 'receiveDisconnectedUser'
 }
 
 export interface ActiveUser {
