@@ -37,7 +37,3 @@ export interface Chat {
   messages: SingleMessage[],
   type: 'single' | 'group'
 }
-
-export interface SendActiveUsersMessage {
-  socketId: string
-}

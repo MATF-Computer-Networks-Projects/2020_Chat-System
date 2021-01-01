@@ -3,7 +3,6 @@ import { Socket } from 'socket.io';
 import express from 'express';
 import { 
   socketEvents, 
-  SendActiveUsersMessage,
   ActiveUser,
   SingleMessage,
   Chat,
@@ -60,7 +59,7 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
 
   socket.on(socketEvents.SEND_MESSAGE, (msg: SingleMessage) => {
     
-    console.log('SEND_MESSAGE: ', msg)
+    console.log('SEND_MESSAGE')
 
     console.log('RECEIVERS: ',msg.receivers);
 
@@ -74,7 +73,6 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
         type: msg.type,
         name: msg.name,
       }
-      console.log('RECEIVE_MESSAGE: ', socketEvents.RECEIVE_MESSAGE + receiver.userId)
       socket.broadcast.emit(socketEvents.RECEIVE_MESSAGE + receiver.userId, newMessage)
     })
   })
