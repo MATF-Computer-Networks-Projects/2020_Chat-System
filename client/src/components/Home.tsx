@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import ActiveUsersList from './ActiveUsersList';
 import GroupChatsList from './GroupChatsList';
 import ChatTextbox from './ChatTextbox';
+import DisconnectComponent from './DiconnectComponent';
 import Grid from '@material-ui/core/Grid';
 import { 
   ActiveUser,
@@ -102,6 +103,11 @@ export default function Home () {
             <ChatTextbox  
               selectedChat={selectedChat} 
               updateSingleUserChat={updateSingleUserChat}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <DisconnectComponent
+              updateCurrentUserChats={updateCurrentUserChats}
             />
           </Grid>
         </Grid>
