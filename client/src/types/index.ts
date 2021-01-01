@@ -1,6 +1,6 @@
 export const socketEvents = {
   CONNECT: 'connect',
-  DISCONNECT: 'disconnect',
+  DISCONNECT_USER: 'disconnectUSer',
   CONNECTION: 'connection',
   SEND_USERNAME: 'sendUsername',
   
