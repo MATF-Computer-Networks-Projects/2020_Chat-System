@@ -98,9 +98,11 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
     })
   })
 
-  socket.on(socketEvents.DISCONNECT, (disconnectedUser: ActiveUser) => {
-    console.log('User disconnected: ', disconnectedUser);
+  socket.on(socketEvents.DISCONNECT_USER, (disconnectedUser: ActiveUser) => {
+    console.log('User disconnected: ', disconnectedUser)
     activeUsers = activeUsers.filter(user => user.userId !== disconnectedUser.userId)
+    console.log('Currently active users: ', activeUsers)
+
     
     socket.broadcast.emit(socketEvents.RECEIVE_DISCONNECTED_USER, disconnectedUser)
     socket.broadcast.emit(socketEvents.RECEIVE_ACTIVE_USERS, activeUsers)
@@ -109,13 +111,6 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
 
 });
 
-// io.on(socketEvents.DISCONNECT, (disconnectedUser: ActiveUser) => {
-//   console.log('User disconnected: ', disconnectedUser);
-//   activeUsers = activeUsers.filter(user => user.userId !== disconnectedUser.userId)
-//   socket.broadcast.emit
-
-
-// });
 
 server.listen(envVal.serverPort, () => {
   console.log(`listening on ${envVal.serverPort}`)
