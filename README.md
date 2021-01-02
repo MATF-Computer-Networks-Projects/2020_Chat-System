@@ -73,16 +73,16 @@ If you run into some TS related problems during build, please make sure that you
 ### Register Page
 ![Register Page](https://i.postimg.cc/0QK5WjcG/register-Page.png)
 ### Home page
-![Home page no user selected](https://i.postimg.cc/T1rdxS8p/home-Page-No-User-Selected.png)
+![Home page no user selected](https://i.postimg.cc/Jz0QQPnk/home-Page-No-User-Selected.png)
 
-![Home page user selected](https://i.postimg.cc/4x4fCBWx/home-Page-User-Selected.png)
+![Home page user selected](https://i.postimg.cc/fRPfqmtg/home-Page-User-Selected.png)
 
-![Home page new message](https://i.postimg.cc/8khNjq3C/home-Page-New-Message.png)
+![Home page new message](https://i.postimg.cc/7LTMFhSP/home-Page-New-Message.png)
 
-![Home page send attachments](https://i.postimg.cc/dtsPDDrW/home-Page-Send-Attachments.png)
+![Home page send attachments](https://i.postimg.cc/Fzhykx81/home-Page-Send-Attachments.png)
 
-![Home page group created](https://i.postimg.cc/GtbNBS8B/home-Page-New-Group.png)
+![Home page group created](https://i.postimg.cc/RhGc7Hxd/home-Page-New-Group.png)
 
-![Home page send group message](https://i.postimg.cc/hjBZw30C/home-Page-Send-Group-Message.png)
+![Home page send group message](https://i.postimg.cc/fWvjn6Sd/home-Page-Send-Group-Message.png)
 
 
