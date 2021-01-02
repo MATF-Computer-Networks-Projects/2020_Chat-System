@@ -60,16 +60,7 @@ io.on(socketEvents.CONNECTION, (socket: Socket) => {
     console.log('RECEIVERS: ',msg.receivers);
 
     msg.receivers.forEach(receiver => {
-      const newMessage: SingleMessage = {
-        sender: msg.sender,
-        receivers: msg.receivers,
-        message: msg.message,
-        timestampUTC: msg.timestampUTC,
-        seen: msg.seen,
-        type: msg.type,
-        name: msg.name,
-      }
-      socket.broadcast.emit(socketEvents.RECEIVE_MESSAGE + receiver.userId, newMessage)
+      socket.broadcast.emit(socketEvents.RECEIVE_MESSAGE + receiver.userId, msg)
     })
   })
 
