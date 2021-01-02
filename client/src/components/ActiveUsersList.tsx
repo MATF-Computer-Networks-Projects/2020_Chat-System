@@ -14,8 +14,10 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { v4 as uuidv4 } from 'uuid';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useSelector, useDispatch } from 'react-redux';
 import * as userUtils from '../utils/user';
+import { updateAllChats } from '../store/actionCreators';
+
 interface Props {
   updateSelectedChat: Function
   selectedChat: Chat | undefined
@@ -40,7 +42,13 @@ export default function ActiveUsersList(props: Props) {
   const socket = useSocket();
   const [requestedActiveUsers, setRequestedActiveUsers] = React.useState<boolean>(false);
   const classes = useStyles();
+  const dispatch = useDispatch();
   
+  const updateAllChatsCallback = React.useCallback(
+    (newChats: Chat[]) => dispatch(updateAllChats(newChats)),
+    [dispatch]
+  )
+
   const currentUser = useSelector(
     (state: UserState) => state.currentUser,
     shallowEqual
@@ -71,9 +79,19 @@ export default function ActiveUsersList(props: Props) {
       return;
     }
 
-    socket.on(socketEvents.RECEIVE_ACTIVE_USERS, (msg: ReceiveActiveUsersMessage) => {
-      props.updateActiveUsers(msg.activeUsers);
-      createNewEmptyChatsIfNeeded(msg.activeUsers);
+    socket.on(socketEvents.RECEIVE_ACTIVE_USERS, (activeUsers: ActiveUser[]) => {
+      props.updateActiveUsers(activeUsers);
+      createNewEmptyChatsIfNeeded(activeUsers);
+    })
+
+    socket.on(socketEvents.RECEIVE_DISCONNECTED_USER, (disconnectedUser: ActiveUser) => {
+      
+      if (currentUser.userId === disconnectedUser.userId) {
+        return
+      }
+      
+      const updatedUserChats = currentUserChats.filter(chat => chat.type === 'single' && !chat.users.includes(disconnectedUser))
+      updateAllChatsCallback(updatedUserChats)
     })
   }, [socket]);
 

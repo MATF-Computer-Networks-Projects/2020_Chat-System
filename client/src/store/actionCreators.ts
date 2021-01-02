@@ -37,6 +37,15 @@ export const updateSingleChat = (updatedChat: Chat) => {
   return dispatchAction(action)
 }
 
+export const updateAllChats = (allChats: Chat[]) => {
+  const action: UserAction = {
+    type: actionTypes.UPDATE_ALL_CHATS,
+    allChats
+  }
+  return dispatchAction(action)
+}
+
+
 
 export const dispatchAction = (action: UserAction) => {
   return (dispatch: DispatchType) => {

@@ -10,11 +10,7 @@ import { useHistory } from 'react-router-dom';
 import { shallowEqual, useSelector, useDispatch } from 'react-redux';
 import { addUsername } from '../store/actionCreators';
 
-interface Props {
-  updateCurrentUserChats: Function
-}
-
-export default function DisconnectComponent(props: Props) {
+export default function DisconnectComponent() {
   const socket = useSocket()
   const history = useHistory()
   const dispatch = useDispatch()

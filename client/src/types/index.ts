@@ -1,6 +1,5 @@
 export const socketEvents = {
   CONNECT: 'connect',
-  DISCONNECT_USER: 'disconnectUSer',
   CONNECTION: 'connection',
   SEND_USERNAME: 'sendUsername',
   
@@ -9,12 +8,15 @@ export const socketEvents = {
   
   SEND_MESSAGE: 'sendMessage',
   RECEIVE_MESSAGE: 'receiveMessage',
-
+  
   CHECK_USERNAME: 'checkUsername',
   RECEIVE_CHECK_USERNAME: 'receiveCheckUsername',
 
   SEND_GROUP_CHAT: 'sendGroupChat',
   RECEIVE_GROUP_CHAT: 'receiveGroupChat',
+  
+  DISCONNECT_USER: 'disconnectUser',
+  RECEIVE_DISCONNECTED_USER: 'receiveDisconnectedUser'
 }
 
 export const errorMessages = {
@@ -60,6 +62,7 @@ export type UserAction = {
   userId?: string
   newChat?: Chat
   updatedChat?: Chat
+  allChats?: Chat[]
 }
   
 export type DispatchType = (args: UserAction) => UserAction

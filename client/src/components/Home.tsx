@@ -106,9 +106,7 @@ export default function Home () {
             />
           </Grid>
           <Grid item xs={3}>
-            <DisconnectComponent
-              updateCurrentUserChats={updateCurrentUserChats}
-            />
+            <DisconnectComponent/>
           </Grid>
         </Grid>
       </div>
