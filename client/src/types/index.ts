@@ -46,11 +46,6 @@ export interface SingleMessage {
   name: string,
 }
 
-
-export interface ReceiveActiveUsersMessage {
-  activeUsers: ActiveUser[]
-}
-
 export interface UserState {
   currentUser: ActiveUser,
   currentUserChats: Chat[]

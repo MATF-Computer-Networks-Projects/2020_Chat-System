@@ -1,5 +1,4 @@
 import {
-  ActiveUser,
   UserState,
   socketEvents,
 } from '../types';

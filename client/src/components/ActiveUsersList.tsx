@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { 
   ActiveUser,
-  ReceiveActiveUsersMessage,
   socketEvents,
   Chat,
   UserState,
