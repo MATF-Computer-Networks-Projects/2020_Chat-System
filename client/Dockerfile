@@ -5,6 +5,7 @@ RUN npm install
 RUN npm install typescript
 RUN npm run build
 
+
 # server environment
 FROM nginx:alpine
 COPY nginx.conf /etc/nginx/conf.d/configfile.template
