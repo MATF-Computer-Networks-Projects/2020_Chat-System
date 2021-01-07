@@ -4,7 +4,6 @@ dotenv.config();
 
 export interface EnvValType {
   serverPort: string;
-  serverUrl: string;
 }
 
 const loadEnvVars = (): EnvValType => {
@@ -17,7 +16,6 @@ const loadEnvVars = (): EnvValType => {
 
   return {
     serverPort: process.env.SERVER_PORT,
-    serverUrl: process.env.SERVER_URL,
   }
 }
 
