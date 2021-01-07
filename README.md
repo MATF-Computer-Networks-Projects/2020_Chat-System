@@ -4,6 +4,8 @@
 
 Purpose of this project was to implement fully functional chat system with group chats and file upload possibility using **only** web sockets.
 
+Service can be seen [here](https://chat-system.notify-me.rs/)
+
 ## Important note
 
 ### No database 
