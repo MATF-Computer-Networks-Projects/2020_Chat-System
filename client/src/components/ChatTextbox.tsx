@@ -199,7 +199,7 @@ export default function ChatTextbox(props: Props) {
   
   const generateDownloadDialog = (message: SingleMessage) => {
     const text = Buffer.from(message.message as string, 'base64').toString('utf-8')
-    const file = new File([text], uuidv4(), {type: 'text/plain'})
+    const file = new File([text], message.name, {type: 'text/plain'})
     
     const fileDownloadUrl = URL.createObjectURL(file)
 
