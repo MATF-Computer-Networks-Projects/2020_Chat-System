@@ -4,7 +4,7 @@
 
 Purpose of this project was to implement fully functional chat system with group chats and file upload possibility using **only** web sockets.
 
-Service can be seen [here](https://chat-system.notify-me.rs/)
+Service can be seen [here](https://chat-system.notify-me.rs/). Might not work as expected since GCloud is doing some weird stuff on containers.
 
 ## Important note
 
