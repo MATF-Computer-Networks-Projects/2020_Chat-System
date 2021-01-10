@@ -2,6 +2,8 @@
 
 ## About
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/34921120d07d4eeaac040fefa37030c8)](https://app.codacy.com/gh/MATF-Computer-Networks-Projects/2020_Chat-System?utm_source=github.com&utm_medium=referral&utm_content=MATF-Computer-Networks-Projects/2020_Chat-System&utm_campaign=Badge_Grade)
+
 Purpose of this project was to implement fully functional chat system with group chats and file upload possibility using **only** web sockets.
 
 ## Important note
